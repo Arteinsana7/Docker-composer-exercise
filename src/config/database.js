@@ -1,16 +1,18 @@
-import e from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export async function connectDB() {
   try {
     const options = {};
     const connect = await mongoose.connect(process.env.MONGODB_URI, options);
-    console.log(`connected to mongo DB : ${connect.connection.host}`);
-    console.log(`Base de donne : ${connect.connection.name}`);
+    console.log(`✅ Connecté à MongoDB : ${connect.connection.host}`);
+    console.log(`📦 Base de données : ${connect.connection.name}`);
 
     return connect;
   } catch (error) {
-    console.error("Error de conection  :", error);
+    console.error("❌ Erreur de connexion :", error);
     console.error(error.message);
     process.exit(1);
   }
@@ -19,9 +21,9 @@ export async function connectDB() {
 export async function closeDB() {
   try {
     await mongoose.connection.close();
-    console.log("MongoDB fermée");
+    console.log("🔒 MongoDB fermée");
   } catch (error) {
-    console.error("error lors de la fermeture de mongo DB; ", error);
+    console.error("❌ Erreur lors de la fermeture de MongoDB:", error);
   }
 }
 

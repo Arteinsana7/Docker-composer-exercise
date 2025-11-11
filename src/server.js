@@ -1,20 +1,14 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const { connectDB } = require("./config/database");
-import { connectDB } from "./config/database";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import { connectDB } from "./config/database.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const MONGO_URI = process.env.MONGO_URI;
-
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("✅ Connecté à MongoDB"))
-  .catch((err) => console.error("❌ Erreur MongoDB:", err));
+const PORT = process.env.PORT || 5001;
 
 const itemSchema = new mongoose.Schema({
   name: String,
@@ -61,13 +55,13 @@ app.post("/api/items", async (req, res) => {
 async function startServer() {
   try {
     await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+    });
   } catch (err) {
-    console.error("❌ Erreur lors de la connexion à la base de données:", err);
+    console.error("❌ Erreur:", err);
+    process.exit(1);
   }
 }
-
-app.listen(PORT, () => {
-  const PORT = process.env.PORT || 5001;
-});
-console.log(`🚀 Serveur démarré sur le port ${PORT}`);
 startServer();

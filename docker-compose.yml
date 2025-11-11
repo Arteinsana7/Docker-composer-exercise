@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - MONGO_URI=mongodb://admin:password123@mongodb:27017/mabase?authSource=admin
+      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/mabase?authSource=admin
       - PORT=3000
     depends_on:
       - mongodb
