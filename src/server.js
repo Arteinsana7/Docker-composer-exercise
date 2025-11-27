@@ -4,14 +4,16 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { connectDB } from "./config/database.js";
 import articleRoutes from "./routes/article.js";
+import commentRoutes from "./routes/comment.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use("/api/articles", articleRoutes);
+app.use("/api/comments", commentRoutes);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3000;
 
 // const itemSchema = new mongoose.Schema({
 //   name: String,

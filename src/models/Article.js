@@ -76,7 +76,7 @@ articleSchema.statics.findPublished = function () {
 };
 
 articleSchema.statics.findByCategory = function (category) {
-  return this.find({ category, publish: true }).sort({ createdAt: -1 });
+  return this.find({ category, published: true }).sort({ createdAt: -1 });
 };
 
 // virtual schemas (Champs virtuels) is used to define fields that are not stored in the database but are computed on the fly
@@ -87,7 +87,12 @@ articleSchema.virtual("comments", {
   foreignField: "article", // Le champ dans Comment qui fait référence à Article
 });
 
-articleSchema.virtual("commentCount");
+articleSchema.virtual("commentCount", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "article",
+  count: true,
+});
 
 articleSchema.virtual("summary").get(function () {
   if (this.content.length <= 150) {
