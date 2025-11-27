@@ -1,7 +1,8 @@
 .DS_store
 .env
 node_modules
-
 package-lock.json
-
-.history
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.history/

@@ -1,1 +1,5 @@
-GET http://localhost:3000
+GET http://localhost:3000/api/ressource?sort
+
+GET http://localhost:3000/api/ressource/123
+
+# Authorization: Bearer (your_token_here)

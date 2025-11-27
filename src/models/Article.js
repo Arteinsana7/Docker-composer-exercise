@@ -1,7 +1,7 @@
 // import { Collection, mongo } from "mongoose";
 import mongoose from "mongoose";
 
-const ArticleSchema = new mongoose.Schema(
+const articleSchema = new mongoose.Schema(
   {
     // enssemble des attributs d'un article
     // titre, contenu, auteur, publié, categorie, vues
@@ -18,8 +18,7 @@ const ArticleSchema = new mongoose.Schema(
     },
 
     author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
 
@@ -38,18 +37,79 @@ const ArticleSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+
+    // commentShema
   },
   {
     timestamps: true,
-    collection: "articles",
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
-
-  //Options generales sur l'entite
-  //   {
-  // collection: "articles",
-  //   }
-
-  // timestamps: true = create fate gere automatiquement createdAt et updatedAt
 );
 
-export const Article = mongoose.model("Article", ArticleSchema);
+//Options generales sur l'entite
+//   {
+// collection: "articles",
+//   }
+
+// timestamps: true = create fate gere automatiquement createdAt et updatedAt
+
+articleSchema.methods.publier = function () {
+  this.published = true;
+  return this.save();
+};
+
+articleSchema.methods.depublier = function () {
+  this.published = false;
+  return this.save();
+};
+
+articleSchema.methods.incrementerVues = function () {
+  this.views += 1;
+  return this.save();
+};
+
+// Methodes statiques
+
+articleSchema.statics.findPublished = function () {
+  return this.find({ published: true }).sort({ createdAt: -1 });
+};
+
+articleSchema.statics.findByCategory = function (category) {
+  return this.find({ category, publish: true }).sort({ createdAt: -1 });
+};
+
+// virtual schemas (Champs virtuels) is used to define fields that are not stored in the database but are computed on the fly
+
+articleSchema.virtual("comments", {
+  ref: "Comment", // Le modèle to refrence
+  localField: "_id", // Le champ dans Article
+  foreignField: "article", // Le champ dans Comment qui fait référence à Article
+});
+
+articleSchema.virtual("commentCount");
+
+articleSchema.virtual("summary").get(function () {
+  if (this.content.length <= 150) {
+    return this.content;
+  }
+  return this.content.substring(0, 150) + "...";
+});
+
+// Middlewares hooks
+articleSchema.pre("save", function (next) {
+  console.log(`Sauvegarde de l'article : ${this.title}`);
+  next();
+});
+
+articleSchema.post("save", function (doc) {
+  console.log(`Article sauvegardé : ${doc.title} `);
+});
+
+export default mongoose.model("Article", articleSchema);
+
+// statiques = sur le modèle pour des requêtes, méthodes d'instance = sur un document pour ses actions,
+// virtuels = propriétés calculées.
+
+// donner la ref de l'artcile au schema commentaire , la ref doit correnpondre au nom du modele
+// export const Article= mongoose.model("Article", articleSchema);
