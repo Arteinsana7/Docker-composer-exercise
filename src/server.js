@@ -6,16 +6,12 @@ import { connectDB } from "./config/database.js";
 import articleRoutes from "./routes/article.js";
 import commentRoutes from "./routes/comment.js";
 import authorisationRoutes from "./routes/authorisation.js";
+import { errorHandler, notFound } from "./utils/middlewares/errorHandler.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/auth", authorisationRoutes);
-app.use("/api/articles", articleRoutes);
-app.use("/api/comments", commentRoutes);
-
-const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
   res.json({
@@ -31,6 +27,17 @@ app.get("/api/health", (req, res) => {
       mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
   });
 });
+
+// routes api
+app.use("/api/auth", authorisationRoutes);
+app.use("/api/articles", articleRoutes);
+app.use("/api/comments", commentRoutes);
+
+// error handlers
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {

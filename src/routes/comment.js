@@ -1,37 +1,37 @@
-// src/routes/comment.js
-
 import express from "express";
 import {
   createComment,
   getAllComments,
   getCommentById,
+  getCommentsByArticle, // from article controller
   updateComment,
   deleteComment,
   likeComment,
 } from "../controllers/CommentController.js";
+import { protect } from "../utils/middlewares/authorisation.js";
 
 const router = express.Router();
 
-// =====  GENERAL ROUTES  =====
+// ===== ROUTES PUBLIQUES =====
 
-// GET /api/comments - ALL COMMENTS
+// GET /api/comments - all comments
 router.get("/", getAllComments);
 
-// POST /api/comments - CREATE A NEW COMMENT
-router.post("/", createComment);
-
-// ===== ROUTES WITH ID =====
-
-// GET /api/comments/:id - JUST ONE COMMENT
+// GET /api/comments/:id - commentaire by ID
 router.get("/:id", getCommentById);
 
-// PUT /api/comments/:id - MODIFY A COMMENT
-router.put("/:id", updateComment);
+// ===== ROUTES PROTÉGÉES =====
 
-// DELETE /api/comments/:id - DELETE A COMMENT
-router.delete("/:id", deleteComment);
+// POST /api/comments/:articleId - create a comment
+router.post("/:articleId", protect, createComment);
 
-// // PATCH /api/comments/:id/like - LIKE A COMMENT (MAYBE TO IMPLEMATE LATER)
-// router.patch("/:id/like", likeComment);
+// PUT /api/comments/:id - Modify a comment
+router.put("/:id", protect, updateComment);
+
+// DELETE /api/comments/:id - delete a comment
+router.delete("/:id", protect, deleteComment);
+
+// PATCH /api/comments/:id/like - Like a comment
+router.patch("/:id/like", likeComment);
 
 export default router;

@@ -1,146 +1,78 @@
-import User from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
-// function for generating a token
+import UserModel from "../models/UserModel.js";
+import { catchAsync } from "../utils/middlewares/errorHandler.js";
+import AppError from "../utils/AppError.js";
 
-function generateToken(userId) {
+const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "90d",
+    expiresIn: process.env.JWT_EXPIRES_IN || "30d",
   });
-}
+};
 
-/**
- * @desc    Inscription (Register)
- * @route   POST /api/auth/register
- * @access  Public
- */
-export async function register(req, res) {
-  try {
-    const { nom, email, password } = req.body;
+export const register = catchAsync(async (req, res, next) => {
+  const { nom, email, password } = req.body;
 
-    // Verify if the user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Cet email est déjà utilisé",
-      });
-    }
-
-    // Create a user
-    const user = await User.create({
-      nom,
-      email,
-      password, // Hashed password automatically by middleware pre('save')
-    });
-
-    // Generate a token
-    const token = generateToken(user._id);
-
-    res.status(201).json({
-      success: true,
-      message: "Utilisateur créé avec succès",
-      token,
-      user: {
-        id: user._id,
-        nom: user.nom,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        errors: Object.values(error.errors).map((err) => err.message),
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de l'inscription",
-      error: error.message,
-    });
+  const userExists = await UserModel.findOne({ email });
+  if (userExists) {
+    return next(new AppError("Cet email est déjà utilisé", 400));
   }
-}
 
-/**
- * @desc    Connexion (Login)
- * @route   POST /api/auth/login
- * @access  Public
- */
-export async function login(req, res) {
-  try {
-    const { email, password } = req.body;
+  const user = await UserModel.create({ nom, email, password });
+  const token = generateToken(user._id);
 
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email et mot de passe requis",
-      });
-    }
+  res.status(201).json({
+    success: true,
+    token,
+    user: {
+      id: user._id,
+      nom: user.nom,
+      email: user.email,
+    },
+  });
+});
 
-    // Found User with password this time.
-    const user = await User.findOne({ email }).select("+password");
+export const login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Email ou mot de passe incorrect",
-      });
-    }
-
-    // Veryfy password
-    const isPasswordValid = await user.comparePassword(password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Email ou mot de passe incorrect",
-      });
-    }
-
-    // Generate token
-    const token = generateToken(user._id);
-
-    res.status(200).json({
-      success: true,
-      message: "Connexion réussie",
-      token,
-      user: {
-        id: user._id,
-        nom: user.nom,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la connexion",
-      error: error.message,
-    });
+  if (!email || !password) {
+    return next(
+      new AppError("Veuillez fournir un email et un mot de passe", 400)
+    );
   }
-}
 
-/**
- * @desc    get the profil
- * @route   GET /api/auth/me
- * @access  Private (protected)
- */
-export async function getMe(req, res) {
-  try {
-    // req.user is defined by the middleware protect
-    const user = await User.findById(req.user.id);
+  const user = await UserModel.findOne({ email }).select("+password");
 
-    res.status(200).json({
-      success: true,
-      data: user,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la récupération du profil",
-      error: error.message,
-    });
+  if (!user || !(await user.comparePassword(password))) {
+    return next(new AppError("Email ou mot de passe incorrect", 401));
   }
-}
+
+  const token = generateToken(user._id);
+
+  res.status(200).json({
+    success: true,
+    message: "Connexion réussie",
+    token,
+    user: {
+      id: user._id,
+      nom: user.nom,
+      email: user.email,
+    },
+  });
+});
+
+export const getMe = catchAsync(async (req, res, next) => {
+  const user = req.user;
+
+  if (!user) {
+    return next(new AppError("Utilisateur non trouvé", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    user: {
+      id: user._id,
+      nom: user.nom,
+      email: user.email,
+    },
+  });
+});

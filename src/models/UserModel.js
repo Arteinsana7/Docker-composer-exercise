@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+// structure of automatic hashing
 
 const userSchema = new mongoose.Schema(
   {

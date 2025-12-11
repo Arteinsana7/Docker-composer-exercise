@@ -1,19 +1,20 @@
 import Article from "../models/Article.js";
 
 /**
- * @desc    Créer un nouvel article
+ * @desc    Create a new Article
  * @route   POST /api/articles
- * @access  Public
+ * @access  Private
  */
 
 // === CREATE AN ARTICLE ===
 export async function createArticle(req, res) {
   try {
-    const { title, content, author, category } = req.body;
+    const { title, content, category } = req.body;
     const article = new Article({
       title,
       content,
-      author,
+      // the author is alwaysa  connected user
+      author: req.user._id,
       category,
     });
     const articleSauvegarde = await article.save();
@@ -40,7 +41,7 @@ export async function createArticle(req, res) {
 }
 
 /**
- * @desc    Récupérer tous les articles
+ * @desc   find all articles
  * @route   GET /api/articles
  * @access  Public
  */
@@ -48,7 +49,9 @@ export async function createArticle(req, res) {
 // === GET ALL ARTICLES ===
 export async function getAllArticles(req, res) {
   try {
-    const articles = await Article.find().sort({ createdAt: -1 });
+    const articles = await Article.find()
+      .populate("author", "nom email")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -65,15 +68,19 @@ export async function getAllArticles(req, res) {
 }
 
 /**
- * @desc    Récupérer un article par ID
+ * @desc    find article by id
  * @route   GET /api/articles/:id
  * @access  Public
  */
 
 // === GET AN ARTICLE BY ID ===
+//Public routes
 export async function getArticleById(req, res) {
   try {
-    const article = await Article.findById(req.params.id);
+    const article = await Article.findById(req.params.id).populate(
+      "author",
+      "nom email"
+    );
 
     if (!article) {
       return res.status(404).json({
@@ -104,7 +111,7 @@ export async function getArticleById(req, res) {
 }
 
 /**
- * @desc    Récupérer un article avec ses commentaires
+ * @desc    find and article with his commentaries
  * @route   GET /api/articles/:id/with-comments
  * @access  Public
  */
@@ -156,11 +163,7 @@ export async function getArticleWithComments(req, res) {
 // === UPDATE AN ARTICLE ===
 export async function updateArticle(req, res) {
   try {
-    const article = await Article.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
+    const article = await Article.findById(req.params.id);
     if (!article) {
       return res.status(404).json({
         success: false,
@@ -168,10 +171,27 @@ export async function updateArticle(req, res) {
       });
     }
 
+    // Veryfy that the user is connected to the author
+    if (article.author.toString() !== req.user._id.toString()) {
+      //_id is an object so we convert to string
+      return res.status(403).json({
+        success: false,
+        message: "Non autorisé : vous n'êtes pas l'auteur de cet article",
+      });
+    }
+
+    // Now we can modify
+    const { title, content, category } = req.body;
+    if (title) article.title = title;
+    if (content) article.content = content;
+    if (category) article.category = category;
+
+    const articleModifie = await article.save();
+
     res.status(200).json({
       success: true,
       message: "Article mis à jour avec succès",
-      data: article,
+      data: articleModifie,
     });
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -231,7 +251,8 @@ export async function getPublishedArticles(req, res) {
 // === DELETE AN ARTICLE ===
 export async function deleteArticle(req, res) {
   try {
-    const article = await Article.findByIdAndDelete(req.params.id);
+    // first just get the article
+    const article = await Article.findById(req.params.id);
 
     if (!article) {
       return res.status(404).json({
@@ -239,6 +260,15 @@ export async function deleteArticle(req, res) {
         message: "Article non trouvé",
       });
     }
+    // and we verify that the user connected is the author
+    if (article.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Non autorisé : vous n'êtes pas l'auteur de cet article",
+      });
+    }
+    // now we can delete it
+    await article.deleteOne();
 
     res.status(200).json({
       success: true,

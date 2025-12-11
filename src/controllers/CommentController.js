@@ -1,274 +1,187 @@
-// src/controllers/CommentController.js
-
 import Comment from "../models/Comment.js";
 import Article from "../models/Article.js";
+import { catchAsync } from "../utils/middlewares/errorHandler.js";
+import AppError from "../utils/AppError.js";
 
 /**
  * @desc    Créer un commentaire
- * @route   POST /api/comments
- * @access  Public
+ * @route   POST /api/comments/:articleId
+ * @access  Private
  */
-export async function createComment(req, res) {
-  try {
-    const { content, author, article } = req.body;
+export const createComment = catchAsync(async (req, res, next) => {
+  const { content } = req.body;
+  const { articleId } = req.params;
 
-    // Vérifier que l'article existe
-    const articleExists = await Article.findById(article);
-    if (!articleExists) {
-      return res.status(404).json({
-        success: false,
-        message: "Article non trouvé",
-      });
-    }
-
-    // Créer le commentaire
-    const comment = await Comment.create({
-      content,
-      author,
-      article,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Commentaire créé avec succès",
-      data: comment,
-    });
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        errors: Object.values(error.errors).map((err) => err.message),
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la création du commentaire",
-      error: error.message,
-    });
+  // Vérifier que l'article existe
+  const articleExists = await Article.findById(articleId);
+  if (!articleExists) {
+    return next(new AppError("Article non trouvé", 404));
   }
-}
+
+  // Créer le commentaire (auteur = user connecté)
+  const comment = await Comment.create({
+    content,
+    author: req.user._id,
+    article: articleId,
+  });
+
+  res.status(201).json({
+    success: true,
+    message: "Commentaire créé avec succès",
+    data: comment,
+  });
+});
 
 /**
  * @desc    Récupérer tous les commentaires
  * @route   GET /api/comments
  * @access  Public
  */
-export async function getAllComments(req, res) {
-  try {
-    const comments = await Comment.find()
-      .populate("article", "title")
-      .sort({ createdAt: -1 });
+export const getAllComments = catchAsync(async (req, res, next) => {
+  const comments = await Comment.find()
+    .populate("author", "nom email")
+    .populate("article", "title")
+    .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      count: comments.length,
-      data: comments,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la récupération des commentaires",
-      error: error.message,
-    });
-  }
-}
+  res.status(200).json({
+    success: true,
+    count: comments.length,
+    data: comments,
+  });
+});
 
 /**
  * @desc    Récupérer un commentaire par ID
  * @route   GET /api/comments/:id
  * @access  Public
  */
-export async function getCommentById(req, res) {
-  try {
-    const comment = await Comment.findById(req.params.id).populate(
-      "article",
-      "title author"
-    );
+export const getCommentById = catchAsync(async (req, res, next) => {
+  const comment = await Comment.findById(req.params.id)
+    .populate("author", "nom email")
+    .populate("article", "title author");
 
-    if (!comment) {
-      return res.status(404).json({
-        success: false,
-        message: "Commentaire non trouvé",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: comment,
-    });
-  } catch (error) {
-    if (error.kind === "ObjectId") {
-      return res.status(404).json({
-        success: false,
-        message: "ID du commentaire non valide",
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la récupération du commentaire",
-      error: error.message,
-    });
+  if (!comment) {
+    return next(new AppError("Commentaire non trouvé", 404));
   }
-}
+
+  res.status(200).json({
+    success: true,
+    data: comment,
+  });
+});
 
 /**
  * @desc    Récupérer les commentaires d'un article
  * @route   GET /api/articles/:articleId/comments
  * @access  Public
  */
-export async function getCommentsByArticle(req, res) {
-  try {
-    const { articleId } = req.params;
+export const getCommentsByArticle = catchAsync(async (req, res, next) => {
+  const { articleId } = req.params;
 
-    // Vérifier que l'article existe
-    const articleExists = await Article.findById(articleId);
-    if (!articleExists) {
-      return res.status(404).json({
-        success: false,
-        message: "Article non trouvé",
-      });
-    }
-
-    // Récupérer les commentaires
-    const comments = await Comment.find({ article: articleId }).sort({
-      createdAt: -1,
-    });
-
-    res.status(200).json({
-      success: true,
-      count: comments.length,
-      data: comments,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la récupération des commentaires",
-      error: error.message,
-    });
+  // Vérifier que l'article existe
+  const articleExists = await Article.findById(articleId);
+  if (!articleExists) {
+    return next(new AppError("Article non trouvé", 404));
   }
-}
+
+  // Récupérer les commentaires
+  const comments = await Comment.find({ article: articleId })
+    .populate("author", "nom email")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    count: comments.length,
+    data: comments,
+  });
+});
 
 /**
  * @desc    Mettre à jour un commentaire
  * @route   PUT /api/comments/:id
- * @access  Public
+ * @access  Private (author only)
  */
-export async function updateComment(req, res) {
-  try {
-    const { id } = req.params;
-    const { content } = req.body;
+export const updateComment = catchAsync(async (req, res, next) => {
+  const { content } = req.body;
 
-    const comment = await Comment.findByIdAndUpdate(
-      id,
-      { content },
-      { new: true, runValidators: true }
-    );
+  const comment = await Comment.findById(req.params.id);
 
-    if (!comment) {
-      return res.status(404).json({
-        success: false,
-        message: "Commentaire non trouvé",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Commentaire mis à jour avec succès",
-      data: comment,
-    });
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        errors: Object.values(error.errors).map((err) => err.message),
-      });
-    }
-
-    if (error.kind === "ObjectId") {
-      return res.status(404).json({
-        success: false,
-        message: "ID du commentaire non valide",
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la mise à jour du commentaire",
-      error: error.message,
-    });
+  if (!comment) {
+    return next(new AppError("Commentaire non trouvé", 404));
   }
-}
+
+  // Vérifier que l'utilisateur connecté est l'auteur
+  if (comment.author.toString() !== req.user._id.toString()) {
+    return next(
+      new AppError(
+        "Non autorisé : vous n'êtes pas l'auteur de ce commentaire",
+        403
+      )
+    );
+  }
+
+  // Modifier le contenu
+  comment.content = content;
+  await comment.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Commentaire mis à jour avec succès",
+    data: comment,
+  });
+});
 
 /**
  * @desc    Supprimer un commentaire
  * @route   DELETE /api/comments/:id
- * @access  Public
+ * @access  Private (author only)
  */
-export async function deleteComment(req, res) {
-  try {
-    const comment = await Comment.findByIdAndDelete(req.params.id);
+export const deleteComment = catchAsync(async (req, res, next) => {
+  const comment = await Comment.findById(req.params.id);
 
-    if (!comment) {
-      return res.status(404).json({
-        success: false,
-        message: "Commentaire non trouvé",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Commentaire supprimé avec succès",
-      data: comment,
-    });
-  } catch (error) {
-    if (error.kind === "ObjectId") {
-      return res.status(404).json({
-        success: false,
-        message: "ID du commentaire non valide",
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors de la suppression du commentaire",
-      error: error.message,
-    });
+  if (!comment) {
+    return next(new AppError("Commentaire non trouvé", 404));
   }
-}
+
+  // Vérifier que l'utilisateur connecté est l'auteur
+  if (comment.author.toString() !== req.user._id.toString()) {
+    return next(
+      new AppError(
+        "Non autorisé : vous n'êtes pas l'auteur de ce commentaire",
+        403
+      )
+    );
+  }
+
+  await comment.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Commentaire supprimé avec succès",
+    data: comment,
+  });
+});
 
 /**
  * @desc    Liker un commentaire
  * @route   PATCH /api/comments/:id/like
- * @access  Public
+ * @access  Public (pour l'instant, sans tracking)
  */
-export async function likeComment(req, res) {
-  try {
-    const comment = await Comment.findById(req.params.id);
+export const likeComment = catchAsync(async (req, res, next) => {
+  const comment = await Comment.findById(req.params.id);
 
-    if (!comment) {
-      return res.status(404).json({
-        success: false,
-        message: "Commentaire non trouvé",
-      });
-    }
-
-    // Utiliser la méthode du model
-    await comment.liker();
-
-    res.status(200).json({
-      success: true,
-      message: "Commentaire liké avec succès",
-      data: comment,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Erreur lors du like",
-      error: error.message,
-    });
+  if (!comment) {
+    return next(new AppError("Commentaire non trouvé", 404));
   }
-}
+
+  // Utiliser la méthode du model (si elle existe)
+  // Pour l'instant, juste incrémenter likes manuellement
+  comment.likes = (comment.likes || 0) + 1;
+  await comment.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Commentaire liké avec succès",
+    data: comment,
+  });
+});
