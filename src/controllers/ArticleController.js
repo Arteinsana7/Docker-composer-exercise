@@ -13,7 +13,7 @@ export async function createArticle(req, res) {
     const article = new Article({
       title,
       content,
-      // the author is alwaysa  connected user
+      // the author is always a connected user
       author: req.user._id,
       category,
     });
@@ -41,21 +41,72 @@ export async function createArticle(req, res) {
 }
 
 /**
- * @desc   find all articles
+ * @desc    Get all articles with pagination, filtering, sorting, and search
  * @route   GET /api/articles
  * @access  Public
+ * @query   page, limit, sort, category, published, search
  */
 
-// === GET ALL ARTICLES ===
 export async function getAllArticles(req, res) {
   try {
-    const articles = await Article.find()
-      .populate("author", "nom email")
-      .sort({ createdAt: -1 });
+    // === 1. EXTRACTION  QUERY PARAMS ===
+    const {
+      page = 1, // Page default : 1
+      limit = 10, // default limit : 10 articles
+      sort = "-createdAt", // sort : by default the newest articles first
+      category, // Filter by category (optional)
+      published, // Filter by statut (optional)
+      search, // Search by word (optional)
+    } = req.query;
 
+    // === 2. CONSTRUCTION OF THE FILTER ===
+    const filter = {};
+
+    // Filter by category
+    if (category) {
+      filter.category = category;
+    }
+
+    // Filter by published status
+    if (published !== undefined) {
+      filter.published = published === "true"; // Conversion string => boolean
+    }
+
+    // Recherche by keyword in title or content
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } }, // insensible to the case
+        { content: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // === 3. PAGINATION ===
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // === 4. REQ WITH ALL FILTERS ===
+    const articles = await Article.find(filter)
+      .populate("author", "nom email")
+      .sort(sort) // Dynamic sorting
+      .skip(skip) // jump from previous pages
+      .limit(limitNumber); // limit
+
+    // === 5. TOTAL COUNT FOR PAGINATION ===
+    const total = await Article.countDocuments(filter);
+
+    // === 6. CALCULATION OF THE NUMBER OF PAGES ===
+    const totalPages = Math.ceil(total / limitNumber);
+
+    // === 7. RESPONSE ===
     res.status(200).json({
       success: true,
-      count: articles.length,
+      count: articles.length, // Articles on this page
+      total, //total articles matching the filter
+      page: pageNumber, // Current page
+      totalPages, //  Articles total per pages
+      hasNextPage: pageNumber < totalPages,
+      hasPrevPage: pageNumber > 1,
       data: articles,
     });
   } catch (error) {
@@ -111,7 +162,7 @@ export async function getArticleById(req, res) {
 }
 
 /**
- * @desc    find and article with his commentaries
+ * @desc    find and article with his comments
  * @route   GET /api/articles/:id/with-comments
  * @access  Public
  */
@@ -155,7 +206,7 @@ export async function getArticleWithComments(req, res) {
 }
 
 /**
- * @desc    Mettre à jour un article
+ * @desc  update an article
  * @route   PUT /api/articles/:id
  * @access  Public
  */
@@ -171,9 +222,8 @@ export async function updateArticle(req, res) {
       });
     }
 
-    // Veryfy that the user is connected to the author
-    if (article.author.toString() !== req.user._id.toString()) {
-      //_id is an object so we convert to string
+    // Veryfy that the user is the author
+    if (!article.author.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
         message: "Non autorisé : vous n'êtes pas l'auteur de cet article",
@@ -218,7 +268,7 @@ export async function updateArticle(req, res) {
 }
 
 /**
- * @desc    Récupérer les articles publiés
+ * @desc    Get all published articles
  * @route   GET /api/articles/published
  * @access  Public
  */
@@ -243,6 +293,61 @@ export async function getPublishedArticles(req, res) {
 }
 
 /**
+ * @desc    Toggle publish/unpublish article
+ * @route   PATCH /api/articles/:id/publish
+ * @access  Private (Author only)
+ */
+// === TOGGLE PUBLISH ARTICLE ===
+export async function togglePublishArticle(req, res) {
+  try {
+    const article = await Article.findById(req.params.id);
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        message: "Article non trouvé",
+      });
+    }
+
+    // Verify that the user is the author
+    if (!article.author.equals(req.user._id)) {
+      return res.status(403).json({
+        success: false,
+        message: "Non autorisé : vous n'êtes pas l'auteur de cet article",
+      });
+    }
+
+    // Toggle the publish status (use custom model methods)
+    if (article.published) {
+      await article.depublier();
+    } else {
+      await article.publier();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: article.published
+        ? "Article publié avec succès"
+        : "Article mis en brouillon",
+      data: article,
+    });
+  } catch (error) {
+    if (error.kind === "ObjectId") {
+      return res.status(404).json({
+        success: false,
+        message: "ID de l'article non valide",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la publication",
+      error: error.message,
+    });
+  }
+}
+
+/**
  * @desc    Supprimer un article
  * @route   DELETE /api/articles/:id
  * @access  Public
@@ -260,8 +365,8 @@ export async function deleteArticle(req, res) {
         message: "Article non trouvé",
       });
     }
-    // and we verify that the user connected is the author
-    if (article.author.toString() !== req.user._id.toString()) {
+    // and we verify that the user is the author
+    if (!article.author.equals(req.user._id)) {
       return res.status(403).json({
         success: false,
         message: "Non autorisé : vous n'êtes pas l'auteur de cet article",
