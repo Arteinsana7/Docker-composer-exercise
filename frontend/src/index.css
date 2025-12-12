@@ -1,68 +1,235 @@
+@import "tailwindcss";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  --grid-gutter: var(--spacing-20);
+  --container-margin: var(--spacing-20);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --grid-gutter: var(--spacing-10);
+    --container-margin: var(--spacing-10);
+  }
+}
+
+@theme {
+  --*: initial;
+
+  /* BREAKPOINTS */
+  --breakpoint-xs: 390px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* COLORS */
+  --color-yve-klein-blue: #0c1baa;
+  --color-deep-blue: #0a0f3d;
+  --color-olive: #294f01;
+  --color-bordeaux: #4f2730;
+  --color-violette: #6a3698;
+  --color-lemon-green: #beff05;
+  --color-break-white: #dfd5cb;
+  --color-pink: #eca5eb;
+  --color-orange: #ef6d31;
+
+  /* SPACING */
+  --spacing-10: 0.625rem; /* 10px */
+  --spacing-20: 1.25rem; /* 20px */
+  --spacing-40: 2.5rem; /* 40px */
+}
+
+/* === GRID SYSTEM === */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  column-gap: var(--grid-gutter);
+}
+
+@media (min-width: 768px) {
+  .main-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.main-container {
+  padding-inline: var(--container-margin);
+  overflow: hidden;
+  position: relative;
+}
+
+/* === FONTS CUSTOM === */
+@font-face {
+  font-family: "Aeonik";
+  src: url("/fonts/Aeonik-Regular.woff2") format("woff2");
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@font-face {
+  font-family: "ArminGrotesk";
+  src: url("/fonts/ArminGrotesk-SemiBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+/* === STYLES GLOBAUX === */
+body {
+  background-color: var(--color-deep-blue);
+  color: var(--color-break-white);
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Aeonik", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  color: var(--color-lemon-green);
+  font-family: "ArminGrotesk", "Aeonik", sans-serif;
+}
+
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  transition: color 0.2s;
+  text-decoration: none;
 }
+
 a:hover {
-  color: #535bf2;
+  color: var(--color-lemon-green);
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* === COMPOSANTS === */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  display: inline-block;
+  text-align: center;
+  border: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-primary {
+  background-color: var(--color-lemon-green);
+  color: var(--color-deep-blue);
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(190, 255, 5, 0.5);
+}
+
+.btn-secondary {
+  background-color: var(--color-violette);
+  color: var(--color-break-white);
+}
+
+.btn-secondary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(106, 54, 152, 0.5);
+}
+
+.card {
+  background-color: rgba(26, 31, 58, 0.6);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-violette);
+  border-opacity: 0.3;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  border-color: var(--color-lemon-green);
+  border-opacity: 0.5;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: rgba(26, 31, 58, 0.6);
+  border: 1px solid var(--color-violette);
+  border-radius: 0.5rem;
+  color: var(--color-break-white);
+  transition: all 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-lemon-green);
+  box-shadow: 0 0 0 3px rgba(190, 255, 5, 0.1);
+}
+
+.input::placeholder {
+  color: rgba(223, 213, 203, 0.5);
+}
+
+/* === BADGES === */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-oscillator {
+  background-color: var(--color-lemon-green);
+  color: var(--color-deep-blue);
+}
+
+.badge-envelope {
+  background-color: var(--color-violette);
+  color: var(--color-break-white);
+}
+
+.badge-lfo {
+  background-color: var(--color-pink);
+  color: var(--color-deep-blue);
+}
+
+.badge-filter {
+  background-color: var(--color-yve-klein-blue);
+  color: var(--color-break-white);
+}
+
+.badge-vca {
+  background-color: var(--color-orange);
+  color: var(--color-break-white);
+}
+
+.badge-sequencer {
+  background-color: var(--color-olive);
+  color: var(--color-break-white);
+}
+
+/* === UTILITIES === */
+.text-gradient {
+  background: linear-gradient(
+    to right,
+    var(--color-lemon-green),
+    var(--color-violette),
+    var(--color-yve-klein-blue)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-lime {
+  text-shadow: 0 0 10px rgba(190, 255, 5, 0.8);
+}
+
+.glow-purple {
+  text-shadow: 0 0 10px rgba(106, 54, 152, 0.8);
 }
