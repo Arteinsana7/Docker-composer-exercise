@@ -10,14 +10,14 @@ const generateToken = (userId) => {
 };
 
 export const register = catchAsync(async (req, res, next) => {
-  const { nom, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   const userExists = await UserModel.findOne({ email });
   if (userExists) {
     return next(new AppError("Cet email est déjà utilisé", 400));
   }
 
-  const user = await UserModel.create({ nom, email, password });
+  const user = await UserModel.create({ username, email, password });
   const token = generateToken(user._id);
 
   res.status(201).json({
@@ -25,8 +25,9 @@ export const register = catchAsync(async (req, res, next) => {
     token,
     user: {
       id: user._id,
-      nom: user.nom,
+      username: user.username,
       email: user.email,
+      role: user.role,
     },
   });
 });
@@ -54,8 +55,9 @@ export const login = catchAsync(async (req, res, next) => {
     token,
     user: {
       id: user._id,
-      nom: user.nom,
+      username: user.username,
       email: user.email,
+      role: user.role,
     },
   });
 });
@@ -71,8 +73,9 @@ export const getMe = catchAsync(async (req, res, next) => {
     success: true,
     user: {
       id: user._id,
-      nom: user.nom,
+      username: user.username,
       email: user.email,
+      role: user.role,
     },
   });
 });
