@@ -1,19 +1,19 @@
-import axios from 'axios';
+import axios from "axios";
 
-// URL de ton backend
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// URL of the API from environment variables
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-// Créer l'instance axios
+// Create an Axios instance with base URL
 export const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// Ajouter le token automatiquement à chaque requête
+// add token to each request if exists
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

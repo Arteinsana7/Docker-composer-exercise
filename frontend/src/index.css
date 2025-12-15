@@ -142,7 +142,7 @@ a:hover {
   border-radius: 1rem;
   padding: 1.5rem;
   border: 1px solid var(--color-violette);
-  border-opacity: 0.3;
+  /* border-opacity: 0.3; */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s;
 }
@@ -150,7 +150,7 @@ a:hover {
 .card:hover {
   transform: scale(1.02);
   border-color: var(--color-lemon-green);
-  border-opacity: 0.5;
+  /* border-opacity: 0.5; */
 }
 
 .input {
