@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { authService } from '../services/authService';  // ← Ajoute cet import
+import { authService } from '../services/authService';
 
 export function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');  // ← Ajoute ceci
-  const [loading, setLoading] = useState(false);  // ← Ajoute ceci
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +19,7 @@ export function Register() {
         username,
         email,
         password,
+
       });
 
       console.log('✅ Account created!', response);
@@ -43,10 +44,10 @@ export function Register() {
       <div className="col-span-6 md:col-span-4 md:col-start-5 flex items-center">
         <div className="main-container w-full py-20">
           <div className="card">
-            <h1 className="text-4xl mb-2 text-center">Register</h1>
-            <p className="text-center mb-8 opacity-70">
-              Join La Synthèse community 🎹
-            </p>
+            <h1 className="font-large mb-2 text-center pb-4 uppercase">Register</h1>
+            <h2 className="text-center mb-8 ">
+              Rejoindre la communauté de La Synthèse ∿
+            </h2>
 
             {error && (
               <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg mb-6">
@@ -54,9 +55,9 @@ export function Register() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-20">
               <div>
-                <label htmlFor="username" className="block mb-2 text-sm font-semibold">
+                <label htmlFor="username" className="block mb-4 text-sm font-semibold">
                   Username
                 </label>
                 <input
@@ -65,7 +66,7 @@ export function Register() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="input"
-                  placeholder="johndoe"
+                  placeholder="your username"
                   required
                   disabled={loading}
                 />
@@ -106,7 +107,7 @@ export function Register() {
 
               <button
                 type="submit"
-                className="btn btn-primary w-full"
+                className="btn btn-primary w-full mb-20"
                 disabled={loading}
               >
                 {loading ? 'Creating account...' : 'Create Account'}
@@ -122,6 +123,7 @@ export function Register() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }
