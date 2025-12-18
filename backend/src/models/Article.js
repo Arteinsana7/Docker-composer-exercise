@@ -24,7 +24,7 @@ const articleSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["Oscillator", "Envelope", "LFO", "Filter", "VCA", "Sequencer"],
+      enum: ["oscillator", "envelope", "lfo", "filter", "vca", "sequencer"],
       required: [true, "La catégorie est obligatoire"],
     },
     vues: {
