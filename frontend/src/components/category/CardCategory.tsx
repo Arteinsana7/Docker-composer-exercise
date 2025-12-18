@@ -25,15 +25,16 @@ export const CardCategory = ({ category, icon, image, title, description }: Card
     return (
         <div className="col-span-full md:col-span-4">
             <div className="main-container">
-                <div className="">
+                <div className="mb-10">
 
                     <Link to={`/categories/${category}`}>
-                        <div className="card min-h-[300px]  flex flex-col justify-between">
+                        <div className="card min-h-[300px]  flex flex-col justify-between gap-y-10 items-end ">
 
                             {/* Badge + icon  */}
-                            <div className="flex items-left ">
-                                {icon && <span className="text-3xl">{icon}</span>}
+                            <div className="">
+
                                 <span className={`badge ${getBadgeClass(category)}`}>
+                                    {icon && <span className="text-3xl pr-10">{icon}</span>}
                                     {category}
                                 </span>
                             </div>
@@ -41,7 +42,7 @@ export const CardCategory = ({ category, icon, image, title, description }: Card
                             <h3 className="text-2xl font-bold mb-3">
                                 {title}
                             </h3>
-                            <div className="w-full h-48 mb-4 rounded-lg">
+                            <div className="w-full min-h-48  rounded-lg">
                                 {/* image */}
                                 <img
                                     src={image}

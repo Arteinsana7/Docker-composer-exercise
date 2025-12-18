@@ -30,6 +30,7 @@
   --color-break-white: #dfd5cb;
   --color-pink: #eca5eb;
   --color-orange: #ef6d31;
+  --color-green-minth: #6fec74;
 
   /* SPACING */
   --spacing-10: 0.625rem; /* 10px */
@@ -40,12 +41,19 @@
   --font-small: 14px;
   --font-medium: 16px;
   --font-large: 20px;
+
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extra-bold: 800;
 }
 
 /* === GRID SYSTEM === */
 .main-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  margin-inline: var(--container-margin);
   column-gap: var(--grid-gutter);
   row-gap: 2rem; /* space between row for the cards categor */
 }
@@ -89,7 +97,7 @@
 body {
   background-color: var(--color-deep-blue);
   color: var(--color-break-white);
-  margin: 0.5rem;
+  /* margin: 0.5rem; */
   min-height: 100vh;
   font-family: "Aeonik", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -120,7 +128,7 @@ a {
 .btn {
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.2s;
   cursor: pointer;
   display: inline-block;
@@ -132,10 +140,11 @@ a {
   padding: 0.5rem 1rem;
   font-size: 0.7rem;
   background-color: var(--color-lemon-green);
-  border-radius: 1rem;
+  border-radius: 1.2rem;
   cursor: pointer;
   text-align: center;
   color: var(--color-deep-blue);
+  font-size: 13px;
 }
 
 .btn-primary {
@@ -162,6 +171,7 @@ a {
   background-color: rgba(26, 31, 58, 0.6);
   border-radius: 0.5rem;
   padding: 1.5rem;
+  /* max-height: ; */
   border: 1px solid var(--color-violette);
   /* border-opacity: 0.3; */
   /* box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); */

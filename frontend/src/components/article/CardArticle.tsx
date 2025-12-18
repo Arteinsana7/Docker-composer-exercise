@@ -1,13 +1,77 @@
-// import {type } from index.ts
+import { Link } from 'react-router-dom';
+import type { Article } from '@/types';
 
+interface ArticleCardProps {
+    article: Article;
+}
 
-const CardArticle = () => {
+export const ArticleCard = ({ article }: ArticleCardProps) => {
+    const { _id, title, content, category, author, createdAt } = article;
+
+    // Badge color based on category
+    const getBadgeClass = (cat: string) => {
+        const badges: Record<string, string> = {
+            oscillator: 'badge-oscillator',
+            envelope: 'badge-envelope',
+            lfo: 'badge-lfo',
+            filter: 'badge-filter',
+            vca: 'badge-vca',
+            sequencer: 'badge-sequencer',
+        };
+        return badges[cat] || 'badge-oscillator';
+    };
+
+    // Format date
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
     return (
-        <div className="card">
-            <h2 className="text-xl font-bold">Article Title</h2>
-            <p className="text-sm">Article excerpt goes here...</p>
+        <div className="col-span-6 md:col-span-4">
+            <div className="main-container">
+                <div className="card h-full flex flex-col">
+
+                    {/* Category badge */}
+                    <div className="mb-4">
+                        <span className={`badge ${getBadgeClass(category)}`}>
+                            {category}
+                        </span>
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="text-2xl font-bold mb-3">
+                        {title}
+                    </h2>
+
+                    {/* Excerpt */}
+                    <p className="text-beige opacity-80 mb-4 flex-grow">
+                        {content.substring(0, 150)}...
+                    </p>
+
+                    {/* Footer */}
+                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-synth-purple/30">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-sm opacity-70">
+                                By {author.username}
+                            </span>
+                            <span className="text-xs opacity-50">
+                                {formatDate(createdAt)}
+                            </span>
+                        </div>
+                        <Link
+                            to={`/articles/${_id}`}
+                            className="text-lemon-green hover:underline font-semibold"
+                        >
+                            Read more →
+                        </Link>
+                    </div>
+
+                </div>
+            </div>
         </div>
     );
 };
-
-export default CardArticle;

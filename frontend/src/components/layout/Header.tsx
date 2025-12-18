@@ -7,7 +7,7 @@ const Header = () => {
             <nav className="main-container py-30">
                 <div className="flex justify-between items-center ">
                     {/* Logo */}
-                    <Link to="/" className="font-medium uppercase">
+                    <Link to="/" className="font-medium  uppercase">
                         <FuzzyText
                             baseIntensity={0.2}
                             color="#beff05"

@@ -5,25 +5,25 @@ export const articleService = {
   // Find all articles
   getAll: async (): Promise<Article[]> => {
     const response = await api.get("/articles");
-    return response.data;
+    return response.data.data;
   },
 
   // Find an article by ID
   getById: async (id: string): Promise<Article> => {
     const response = await api.get(`/articles/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   // Find articles by category
   getByCategory: async (category: Category): Promise<Article[]> => {
     const response = await api.get(`/articles/category/${category}`);
-    return response.data;
+    return response.data.data;
   },
 
   // Create an article (admin)
   create: async (articleData: Partial<Article>): Promise<Article> => {
     const response = await api.post("/articles", articleData);
-    return response.data;
+    return response.data.data;
   },
 
   // Update an article (admin)
@@ -32,7 +32,7 @@ export const articleService = {
     articleData: Partial<Article>
   ): Promise<Article> => {
     const response = await api.put(`/articles/${id}`, articleData);
-    return response.data;
+    return response.data.data;
   },
 
   // Delete an article (admin)

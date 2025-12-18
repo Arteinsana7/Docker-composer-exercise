@@ -1,6 +1,6 @@
 import Header from '@/components/layout/Header';
-import { CategoryGrid } from '@/components/article/CategoryGrid';
-
+import { CategoryGrid } from '@/components/category/CategoryGrid';
+import Footer from '@/components/layout/Footer';
 
 const Home = () => {
     return (
@@ -36,7 +36,9 @@ const Home = () => {
                 {/*  6 cards - each take 4 columns */}
                 <CategoryGrid />
 
+
             </div>
+            <Footer />
         </>
     );
 };
