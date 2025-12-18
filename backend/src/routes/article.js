@@ -7,6 +7,7 @@ import {
   getArticleWithComments,
   updateArticle,
   getPublishedArticles,
+   getArticlesByCategory,
   deleteArticle,
   togglePublishArticle,
 } from "../controllers/ArticleController.js";
@@ -17,6 +18,7 @@ const router = express.Router();
 // === FIRST THE SPECIFIQUE ROUTES ===
 // publish articles
 router.get("/published", getPublishedArticles);
+router.get("/category/:category", getArticlesByCategory); // add on the model ?
 // add protected middleware the protected routes = creation , modification and delete.
 
 // === GENERAL ROUTES ===

@@ -293,10 +293,39 @@ export async function getPublishedArticles(req, res) {
 }
 
 /**
+ * @desc    Get articles by category
+ * @route   GET /api/articles/category/:category
+ * @access  Public
+ */
+
+// === GET ARTICLES BY CATEGORY ===
+export async function getArticlesByCategory(req, res) {
+  try {
+    const { category } = req.params;
+    const articles = await Article.findByCategory(category);
+
+    res.status(200).json({
+      success: true,
+      count: articles.length,
+      data: articles,
+    });
+  } catch (error) {
+    console.error('Error getting articles by category:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des articles par catégorie',
+      error: error.message,
+    });
+  }
+}
+
+
+/**
  * @desc    Toggle publish/unpublish article
  * @route   PATCH /api/articles/:id/publish
  * @access  Private (Author only)
  */
+
 // === TOGGLE PUBLISH ARTICLE ===
 export async function togglePublishArticle(req, res) {
   try {
