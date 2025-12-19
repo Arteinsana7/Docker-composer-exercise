@@ -39,7 +39,7 @@ export const createComment = catchAsync(async (req, res, next) => {
  */
 export const getAllComments = catchAsync(async (req, res, next) => {
   const comments = await Comment.find()
-    .populate("author", "nom email")
+   .populate("author", "username email")
     .populate("article", "title")
     .sort({ createdAt: -1 });
 
@@ -57,7 +57,7 @@ export const getAllComments = catchAsync(async (req, res, next) => {
  */
 export const getCommentById = catchAsync(async (req, res, next) => {
   const comment = await Comment.findById(req.params.id)
-    .populate("author", "nom email")
+   .populate("author", "username email")
     .populate("article", "title author");
 
   if (!comment) {
@@ -86,7 +86,7 @@ export const getCommentsByArticle = catchAsync(async (req, res, next) => {
 
   // Récupérer les commentaires
   const comments = await Comment.find({ article: articleId })
-    .populate("author", "nom email")
+    .populate("author", "username email")
     .sort({ createdAt: -1 });
 
   res.status(200).json({

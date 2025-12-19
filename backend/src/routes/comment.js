@@ -3,7 +3,7 @@ import {
   createComment,
   getAllComments,
   getCommentById,
-  getCommentsByArticle, // from article controller
+  // getCommentsByArticle, // from article controller : CHANGED to the Articles r
   updateComment,
   deleteComment,
   likeComment,

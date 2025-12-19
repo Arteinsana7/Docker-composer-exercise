@@ -28,7 +28,7 @@ router.post("/", protect, createArticle); // PROTECTED ROUTE WITH THE AUTHORISAT
 // === ROUTES WITH ID ===
 router.get("/:id", getArticleById);
 router.get("/:id/with-comments", getArticleWithComments);
-router.get("/:id/comments", getCommentsByArticle);
+router.get("/:articleId/comments", getCommentsByArticle);
 router.put("/:id", protect, updateArticle); // PROTECTED ROUTE WITH THE AUTHORISATION MIDDLEWARE
 router.delete("/:id", protect, deleteArticle); // PROTECTED ROUTE WITH THE AUTHORISATION MIDDLEWARE
 router.patch("/:id/publish", protect, togglePublishArticle); // PROTECTED ROUTE WITH THE AUTHORISATION MIDDLEWARE
