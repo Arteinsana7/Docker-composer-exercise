@@ -2,35 +2,48 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-// import { commentService } from '@/services/commentService';
-// import { CommentList } from '@/components/comment/CommentList';
-// import { CommentForm } from '@/components/comment/CommentForm';
 import { articleService } from '@/services/articleService';
-import type { Article, } from '@/types';
+import { commentService } from '@/services/commentService';  // ← Décommente
+import { CommentList } from '@/components/comments/CommentList';  // ← Décommente
+import { CommentForm } from '@/components/comments/CommentForm';  // ← Décommente
+import type { Article, Comment } from '@/types';  // ← Ajoute Comment
 
 const ArticlePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [article, setArticle] = useState<Article | null>(null);
+    const [comments, setComments] = useState<Comment[]>([]);  // ← Ajoute
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    // ← Sépare en deux fonctions
+    const fetchArticle = async () => {
+        if (!id) return;
+        try {
+            const data = await articleService.getById(id);
+            setArticle(data);
+        } catch (err: unknown) {
+            console.error('Error fetching article:', err);
+            setError('Failed to load article');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ← Nouvelle fonction
+    const fetchComments = async () => {
+        if (!id) return;
+        try {
+            const data = await commentService.getByArticle(id);
+            setComments(data);
+        } catch (err: unknown) {
+            console.error('Error fetching comments:', err);
+        }
+    };
+
     useEffect(() => {
-        const fetchArticle = async () => {
-            if (!id) return;
-
-            try {
-                const data = await articleService.getById(id);
-                setArticle(data);
-            } catch (err: unknown) {
-                console.error('Error fetching article:', err);
-                setError('Failed to load article');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchArticle();
+        fetchComments();  // ← Ajoute
     }, [id]);
 
     const getBadgeClass = (cat: string) => {
@@ -57,7 +70,7 @@ const ArticlePage = () => {
         return (
             <>
                 <Header />
-                <div className="text-center py-20 ">
+                <div className="text-center py-20">
                     <p className="text-xl">Loading article...</p>
                 </div>
                 <Footer />
@@ -84,7 +97,7 @@ const ArticlePage = () => {
         <>
             <Header />
 
-            <article className="main-grid py-20 gap-y-20 px-20 pb-40  ">
+            <article className="main-grid py-20 gap-y-20 px-20 pb-40">
 
                 {/* Back button */}
                 <div className="col-span-6 md:col-span-12 md:font-medium">
@@ -99,26 +112,21 @@ const ArticlePage = () => {
                 {/* Article header */}
                 <div className="col-span-6 md:col-span-12">
                     <div className="max-w-4xl mx-auto">
-
-                        {/* Category badge */}
                         <div className="mb-20">
                             <span className={`badge ${getBadgeClass(article.category)}`}>
                                 {article.category}
                             </span>
                         </div>
 
-                        {/* Title */}
                         <h1 className="sm:font-medium md:font-large font-bold mb-6 glow-lime uppercase">
                             {article.title}
                         </h1>
 
-                        {/* Meta info */}
                         <div className="flex items-center gap-4 text-sm opacity-70 mb-8">
                             <span>By {article.author.username}</span>
-                            <span className='px-10'> • </span>
+                            <span className="px-10">•</span>
                             <span>{formatDate(article.createdAt)}</span>
                         </div>
-
                     </div>
                 </div>
 
@@ -133,12 +141,23 @@ const ArticlePage = () => {
                     </div>
                 </div>
 
+                {/* ← SECTION COMMENTAIRES (NOUVELLE) */}
+                <div className="col-span-6 md:col-span-12 mt-16">
+                    <div className="max-w-4xl mx-auto space-y-8">
+                        <CommentForm
+                            articleId={article._id}
+                            onCommentAdded={fetchComments}
+                        />
+                        <CommentList comments={comments} />
+                    </div>
+                </div>
+
                 {/* Footer actions */}
                 <div className="col-span-6 md:col-span-12 mt-12">
-                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-30 pb-30 border-t border-synth-purple/30">
+                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-8 border-t border-synth-purple/30">
                         <Link
                             to={`/categories/${article.category}`}
-                            className="btn btn-secondary "
+                            className="btn btn-secondary"
                         >
                             More {article.category} articles
                         </Link>

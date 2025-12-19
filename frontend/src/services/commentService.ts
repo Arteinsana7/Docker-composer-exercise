@@ -9,11 +9,15 @@ export const commentService = {
   },
 
   // Create a comment
+  // Create a comment
   create: async (commentData: {
     content: string;
     article: string;
   }): Promise<Comment> => {
-    const response = await api.post("/comments", commentData);
+    // ✅ Mets l'articleId dans l'URL au lieu du body
+    const response = await api.post(`/comments/${commentData.article}`, {
+      content: commentData.content,
+    });
     return response.data.data;
   },
 

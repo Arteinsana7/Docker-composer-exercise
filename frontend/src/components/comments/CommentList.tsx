@@ -24,15 +24,15 @@ export const CommentList = ({ comments }: CommentListProps) => {
     }
 
     return (
-        <div className="space-y-6">
-            <h3 className="text-2xl font-bold mb-6">
+        <div className="space-y-10 ">
+            <h3 className="text-2xl font-bold m-20">
                 Comments ({comments.length})
             </h3>
 
             {comments.map((comment) => (
                 <div key={comment._id} className="card">
                     <div className="flex items-center gap-3 mb-3">
-                        <span className="font-semibold text-lemon-green">
+                        <span className="font-semibold text-lemon-green pr-10">
                             {typeof comment.author === 'string'
                                 ? 'Anonymous'
                                 : comment.author.username}
