@@ -48,7 +48,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
                     </h2>
 
                     {/* Excerpt */}
-                    <p className="text-beige opacity-80 mb-4 flex-grow">
+                    <p className="text-beige opacity-80 mb-4 ">
                         {content.substring(0, 150)}...
                     </p>
 

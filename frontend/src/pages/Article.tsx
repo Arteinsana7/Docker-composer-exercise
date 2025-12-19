@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+// import { commentService } from '@/services/commentService';
+// import { CommentList } from '@/components/comment/CommentList';
+// import { CommentForm } from '@/components/comment/CommentForm';
 import { articleService } from '@/services/articleService';
-import type { Article } from '@/types';
+import type { Article, } from '@/types';
 
 const ArticlePage = () => {
     const { id } = useParams<{ id: string }>();
@@ -54,7 +57,7 @@ const ArticlePage = () => {
         return (
             <>
                 <Header />
-                <div className="text-center py-20">
+                <div className="text-center py-20 ">
                     <p className="text-xl">Loading article...</p>
                 </div>
                 <Footer />
@@ -81,15 +84,15 @@ const ArticlePage = () => {
         <>
             <Header />
 
-            <article className="main-grid py-20 gap-y-8">
+            <article className="main-grid py-20 gap-y-20 px-20 pb-40  ">
 
                 {/* Back button */}
-                <div className="col-span-6 md:col-span-12">
+                <div className="col-span-6 md:col-span-12 md:font-medium">
                     <Link
                         to={`/categories/${article.category}`}
                         className="text-lemon-green hover:underline flex items-center gap-2"
                     >
-                        ← Back to {article.category}
+                        ← Back to {article.category} articles
                     </Link>
                 </div>
 
@@ -98,21 +101,21 @@ const ArticlePage = () => {
                     <div className="max-w-4xl mx-auto">
 
                         {/* Category badge */}
-                        <div className="mb-6">
+                        <div className="mb-20">
                             <span className={`badge ${getBadgeClass(article.category)}`}>
                                 {article.category}
                             </span>
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-5xl font-bold mb-6 glow-lime">
+                        <h1 className="sm:font-medium md:font-large font-bold mb-6 glow-lime uppercase">
                             {article.title}
                         </h1>
 
                         {/* Meta info */}
                         <div className="flex items-center gap-4 text-sm opacity-70 mb-8">
                             <span>By {article.author.username}</span>
-                            <span>•</span>
+                            <span className='px-10'> • </span>
                             <span>{formatDate(article.createdAt)}</span>
                         </div>
 
@@ -132,10 +135,10 @@ const ArticlePage = () => {
 
                 {/* Footer actions */}
                 <div className="col-span-6 md:col-span-12 mt-12">
-                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-8 border-t border-synth-purple/30">
+                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-30 pb-30 border-t border-synth-purple/30">
                         <Link
                             to={`/categories/${article.category}`}
-                            className="btn btn-secondary"
+                            className="btn btn-secondary "
                         >
                             More {article.category} articles
                         </Link>

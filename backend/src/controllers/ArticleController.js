@@ -130,7 +130,7 @@ export async function getArticleById(req, res) {
   try {
     const article = await Article.findById(req.params.id).populate(
       "author",
-      "nom email"
+      "username email"
     );
 
     if (!article) {
@@ -171,7 +171,9 @@ export async function getArticleById(req, res) {
 
 export async function getArticleWithComments(req, res) {
   try {
-    const article = await Article.findById(req.params.id).populate({
+    const article = await Article.findById(req.params.id)
+    .populate('author', 'username email')
+    .populate({
       path: "comments",
       options: { sort: { createdAt: -1 } },
     });

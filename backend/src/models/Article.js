@@ -58,11 +58,15 @@ articleSchema.methods.incrementerVues = function () {
 
 // Static methods
 articleSchema.statics.findPublished = function () {
-  return this.find({ published: true }).sort({ createdAt: -1 });
+  return this.find({ published: true })
+  .populate('author', 'username email')
+  .sort({ createdAt: -1 });
 };
 
 articleSchema.statics.findByCategory = function (category) {
-  return this.find({ category, published: true }).sort({ createdAt: -1 });
+  return this.find({ category, published: true })
+  .populate('author', 'username email')
+  .sort({ createdAt: -1 });
 };
 
 // Virtual champs
