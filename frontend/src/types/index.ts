@@ -1,20 +1,20 @@
 // === USER ===
 export interface User {
-  _id: string;
+  id: string;
   username: string;
   email: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   createdAt: string;
 }
 
 // === CATEGORIES ===
-export type Category = 
-  | 'oscillator' 
-  | 'envelope' 
-  | 'lfo' 
-  | 'filter' 
-  | 'vca' 
-  | 'sequencer';
+export type Category =
+  | "oscillator"
+  | "envelope"
+  | "lfo"
+  | "filter"
+  | "vca"
+  | "sequencer";
 
 // === ARTICLE ===
 export interface Article {
@@ -31,7 +31,7 @@ export interface Article {
 export interface Comment {
   _id: string;
   content: string;
-  author: User;
+  author: { _id: string; username: string; email?: string };
   article: string;
   createdAt: string;
 }

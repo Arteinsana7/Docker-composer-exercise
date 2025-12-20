@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { authService } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 export function Register() {
   const [username, setUsername] = useState('');
@@ -8,24 +9,18 @@ export function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      // Call the backend API
-      const response = await authService.register({
-        username,
-        email,
-        password,
-
-      });
-
-      console.log('✅ Account created!', response);
-      alert('Account created successfully! You can now login.');
-
-      // TODO: Redirect to login page
+      await register({ username, email, password });
+      console.log('✅ Account created!');
+      navigate('/');
     } catch (err: unknown) {
       console.error('❌ Registration failed:', err);
       let message = 'Registration failed';
@@ -43,10 +38,18 @@ export function Register() {
     <div className="main-grid min-h-screen">
       <div className="col-span-6 md:col-span-4 md:col-start-5 flex items-center">
         <div className="main-container w-full py-20">
+
+          <button
+            onClick={() => navigate(-1)}
+            className="text-lemon-green hover:underline flex items-center gap-2 mb-40"
+          >
+            ← Back
+          </button>
+
           <div className="card">
             <h1 className="font-large mb-2 text-center pb-4 uppercase">Register</h1>
-            <h2 className="text-center mb-8 ">
-              Rejoindre la communauté de La Synthèse ∿
+            <h2 className="text-center mb-20">
+              Join de Community of sound Synthesis
             </h2>
 
             {error && (
@@ -114,16 +117,15 @@ export function Register() {
               </button>
             </form>
 
-            <p className="text-center mt-6 text-sm opacity-70">
+            <p className="text-center mt-6 text-sm opacity-70 ">
               Already have an account?{' '}
-              <a href="/login" className="font-semibold hover:text-lemon-green">
+              <a href="/login" className="font-semibold  hover:text-lemon-green pl-5">
                 Login here
               </a>
             </p>
           </div>
         </div>
       </div>
-
     </div>
   );
 }

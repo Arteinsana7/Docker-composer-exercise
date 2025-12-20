@@ -43,7 +43,7 @@ const ArticlePage = () => {
 
     useEffect(() => {
         fetchArticle();
-        fetchComments();  // ← Ajoute
+        fetchComments();  //
     }, [id]);
 
     const getBadgeClass = (cat: string) => {
@@ -141,7 +141,7 @@ const ArticlePage = () => {
                     </div>
                 </div>
 
-                {/* ← SECTION COMMENTAIRES (NOUVELLE) */}
+                {/* comments section */}
                 <div className="col-span-6 md:col-span-12 mt-16">
                     <div className="max-w-4xl mx-auto space-y-8">
                         <CommentForm
