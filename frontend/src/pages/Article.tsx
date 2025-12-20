@@ -3,20 +3,22 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { articleService } from '@/services/articleService';
-import { commentService } from '@/services/commentService';  // ← Décommente
-import { CommentList } from '@/components/comments/CommentList';  // ← Décommente
-import { CommentForm } from '@/components/comments/CommentForm';  // ← Décommente
-import type { Article, Comment } from '@/types';  // ← Ajoute Comment
+import { commentService } from '@/services/commentService';
+import { CommentList } from '@/components/comments/CommentList';
+import { CommentForm } from '@/components/comments/CommentForm';
+// import { useAuth } from '@/context/AuthContext';
+import type { Article, Comment } from '@/types';
 
 const ArticlePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    // const { user } = useAuth();
     const [article, setArticle] = useState<Article | null>(null);
-    const [comments, setComments] = useState<Comment[]>([]);  // ← Ajoute
+    const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // ← Sépare en deux fonctions
+
     const fetchArticle = async () => {
         if (!id) return;
         try {
@@ -30,7 +32,6 @@ const ArticlePage = () => {
         }
     };
 
-    // ← Nouvelle fonction
     const fetchComments = async () => {
         if (!id) return;
         try {
@@ -45,6 +46,7 @@ const ArticlePage = () => {
         fetchArticle();
         fetchComments();  //
     }, [id]);
+
 
     const getBadgeClass = (cat: string) => {
         const badges: Record<string, string> = {

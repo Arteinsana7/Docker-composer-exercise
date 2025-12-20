@@ -8,8 +8,10 @@ import rateLimit from "express-rate-limit"; // adding rate limiting to prevent b
 import { connectDB } from "./config/database.js";
 import articleRoutes from "./routes/article.js";
 import commentRoutes from "./routes/comment.js";
+import userRoutes from './routes/user.js';
 import authorisationRoutes from "./routes/authorisation.js";
 import { errorHandler, notFound } from "./utils/middlewares/errorHandler.js";
+
 
 const app = express();
 
@@ -55,6 +57,7 @@ app.get("/api/health", (req, res) => {
 
 // === ROUTES API ===
 app.use("/api/auth", authLimiter, authorisationRoutes);
+app.use('/api/users', userRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/comments", commentRoutes);
 

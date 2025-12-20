@@ -17,10 +17,19 @@ export const commentService = {
     content: string;
     article: string;
   }): Promise<Comment> => {
-    // ✅ Mets l'articleId dans l'URL au lieu du body
+    //Article on URl intead of body
     const response = await api.post(`/comments/${commentData.article}`, {
       content: commentData.content,
     });
+    return response.data.data;
+  },
+
+  // modify a comment
+  update: async (
+    commentId: string,
+    data: { content: string }
+  ): Promise<Comment> => {
+    const response = await api.put(`/comments/${commentId}`, data);
     return response.data.data;
   },
 
