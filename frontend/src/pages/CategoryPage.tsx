@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { articleService } from '@/services/articleService';
-import { ArticleCard } from '@/components/article/CardArticle';
+import { ArticleCard } from '@/components/article/ArticleCard';
 import type { Article, Category } from '@/types';
 
 const CategoryPage = () => {
@@ -83,7 +83,7 @@ const CategoryPage = () => {
                         <p className="text-xl opacity-70 mb-6">
                             No articles yet in this category.
                         </p>
-                        <Link to="/" className="btn btn-primary">
+                        <Link to="/" className="btn-sm">
                             Back to Home
                         </Link>
                     </div>

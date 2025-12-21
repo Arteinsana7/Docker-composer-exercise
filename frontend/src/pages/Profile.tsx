@@ -124,8 +124,8 @@ export function Profile() {
 
     const handleDeleteAccount = () => {
         toast((t) => (
-            <div className="flex flex-col gap-3">
-                <p className="font-bold text-red-500">⚠️ Warning!</p>
+            <div className="flex flex-col gap-3 px-10">
+                <p className="font-bold text-red-500"> ⚠️ Warning! </p>
                 <p>This will permanently delete your account and all your data.</p>
                 <p className="text-sm opacity-70">This action cannot be undone.</p>
                 <div className="flex gap-6">
@@ -224,9 +224,18 @@ export function Profile() {
 
                                 {editingUser ? (
                                     // Edit Mode
-                                    <div className="space-y-5 pb-20">
+                                    <div className="pt-10">
+
+                                        <div className=' flex '>
+                                            <label className="font-small opacity-70 pr-10 ">Role</label>
+                                            <p className="text-lg items-center">
+                                                <span className={`badge ${user.role === 'admin' ? 'badge-vca' : 'badge-lfo'}`}>
+                                                    {user.role}
+                                                </span>
+                                            </p>
+                                        </div>
                                         <div>
-                                            <label className="text-sm opacity-70 block mb-2">Username</label>
+                                            <label className="text-sm opacity-70 block py-10">Username</label>
                                             <input
                                                 type="text"
                                                 value={formData.username}
@@ -236,34 +245,27 @@ export function Profile() {
                                         </div>
 
                                         <div>
-                                            <label className="text-sm opacity-70 block mb-2">Email</label>
+                                            <label className="text-sm opacity-70 block py-10 ">Email</label>
                                             <input
                                                 type="email"
                                                 value={formData.email}
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                className="input w-full"
+                                                className="input w-full mb-20"
                                             />
                                         </div>
 
-                                        <div className='pb-10'>
-                                            <label className="text-sm opacity-70">Role</label>
-                                            <p className="text-lg">
-                                                <span className={`badge ${user.role === 'admin' ? 'badge-vca' : 'badge-lfo'}`}>
-                                                    {user.role}
-                                                </span>
-                                            </p>
-                                        </div>
 
-                                        <div className="flex gap-4">
+
+                                        <div className="flex gap-10  ">
                                             <button
                                                 onClick={handleSaveUserInfo}
-                                                className="btn btn-primary"
+                                                className="btn-sm m-2 "
                                             >
                                                 Save Changes
                                             </button>
                                             <button
                                                 onClick={handleCancelEdit}
-                                                className="btn btn-secondary"
+                                                className="btn-sm-violette"
                                             >
                                                 Cancel
                                             </button>
@@ -272,9 +274,17 @@ export function Profile() {
                                 ) : (
                                     // View Mode
                                     <div className="space-y-5 pb-20">
-                                        <div>
-                                            <label className="text-sm opacity-70">Username</label>
-                                            <p className="text-lg font-semibold">{user.username}</p>
+                                        <div className='flex pb-20  '>
+                                            <label className="items-center pr-10 text-sm opacity-70">Role</label>
+                                            <p className="text-lg">
+                                                <span className={`badge ${user.role === 'admin' ? 'badge-vca' : 'badge-lfo'}`}>
+                                                    {user.role}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div className="space-y-10">
+                                            <label className="font-small opacity-70">Username</label>
+                                            <p className="text-large font-semibold">{user.username}</p>
                                         </div>
 
                                         <div>
@@ -282,20 +292,13 @@ export function Profile() {
                                             <p className="text-lg">{user.email}</p>
                                         </div>
 
-                                        <div className='pb-10'>
-                                            <label className="text-sm opacity-70">Role</label>
-                                            <p className="text-lg">
-                                                <span className={`badge ${user.role === 'admin' ? 'badge-vca' : 'badge-lfo'}`}>
-                                                    {user.role}
-                                                </span>
-                                            </p>
-                                        </div>
+
                                     </div>
                                 )}
                             </div>
 
                             {/* Divider */}
-                            <div className="border-t border-synth-purple/30 pb-20"></div>
+                            <div className="border-t border-synth-purple/30 pb-20 mt-20"></div>
 
                             {/* Stats numbers */}
                             <div>

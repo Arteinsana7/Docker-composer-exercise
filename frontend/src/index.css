@@ -145,6 +145,17 @@ a {
   text-align: center;
   color: var(--color-deep-blue);
   font-size: 13px;
+  font-weight: 500;
+}
+.btn-sm-violette {
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  background-color: var(--color-violette);
+  border-radius: 1.2rem;
+  cursor: pointer;
+  text-align: center;
+  color: white;
+  font-size: 13px;
 }
 
 .btn-primary {

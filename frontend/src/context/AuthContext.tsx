@@ -12,7 +12,7 @@ interface AuthContextType {
     login: (credentials: LoginCredentials) => Promise<void>;
     register: (credentials: RegisterCredentials) => Promise<void>;
     logout: () => void;
-    updateUser: (updatedUser: User) => void;  // ← Ajoute dans le type
+    updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,9 +51,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const updateUser = (updatedUser: User) => {
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
-    };  // ← Ferme la fonction ici
+    };
 
-    return (  // ← Return au bon niveau
+    return (
         <AuthContext.Provider
             value={{
                 user,
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 login,
                 register,
                 logout,
-                updateUser,  // ← Ajoute
+                updateUser,
             }}
         >
             {children}

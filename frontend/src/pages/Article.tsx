@@ -6,31 +6,19 @@ import { articleService } from '@/services/articleService';
 import { commentService } from '@/services/commentService';
 import { CommentList } from '@/components/comments/CommentList';
 import { CommentForm } from '@/components/comments/CommentForm';
-// import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import type { Article, Comment } from '@/types';
+
+
 
 const ArticlePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    // const { user } = useAuth();
+    const { user } = useAuth();
     const [article, setArticle] = useState<Article | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
-
-    const fetchArticle = async () => {
-        if (!id) return;
-        try {
-            const data = await articleService.getById(id);
-            setArticle(data);
-        } catch (err: unknown) {
-            console.error('Error fetching article:', err);
-            setError('Failed to load article');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchComments = async () => {
         if (!id) return;
@@ -43,10 +31,30 @@ const ArticlePage = () => {
     };
 
     useEffect(() => {
-        fetchArticle();
-        fetchComments();  //
-    }, [id]);
+        const fetchData = async () => {
+            if (!id) return;
 
+            try {
+                setLoading(true);
+
+                // Fetch article
+                const articleData = await articleService.getById(id);
+                setArticle(articleData);
+
+                // Fetch comments
+                const commentsData = await commentService.getByArticle(id);
+                setComments(commentsData);
+
+            } catch (err: unknown) {
+                console.error('Error fetching data:', err);
+                setError('Failed to load article');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id]);
 
     const getBadgeClass = (cat: string) => {
         const badges: Record<string, string> = {
@@ -126,7 +134,7 @@ const ArticlePage = () => {
 
                         <div className="flex items-center gap-4 text-sm opacity-70 mb-8">
                             <span>By {article.author.username}</span>
-                            <span className="px-10">•</span>
+                            <span className="px-10"> • </span>
                             <span>{formatDate(article.createdAt)}</span>
                         </div>
                     </div>
@@ -150,20 +158,24 @@ const ArticlePage = () => {
                             articleId={article._id}
                             onCommentAdded={fetchComments}
                         />
-                        <CommentList comments={comments} />
+                        <CommentList
+                            comments={comments}
+                            currentUserId={user?.id}
+                            onCommentDeleted={fetchComments}
+                        />
                     </div>
                 </div>
 
                 {/* Footer actions */}
                 <div className="col-span-6 md:col-span-12 mt-12">
-                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-8 border-t border-synth-purple/30">
+                    <div className="max-w-4xl mx-auto flex justify-between items-center pt-10 border-t border-synth-purple/30">
                         <Link
                             to={`/categories/${article.category}`}
-                            className="btn btn-secondary"
+                            className="btn-sm-violette"
                         >
                             More {article.category} articles
                         </Link>
-                        <Link to="/" className="btn btn-primary">
+                        <Link to="/" className="btn-sm">
                             Back to Home
                         </Link>
                     </div>

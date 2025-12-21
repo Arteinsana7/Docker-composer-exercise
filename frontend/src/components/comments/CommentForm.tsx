@@ -23,7 +23,7 @@ export const CommentForm = ({ articleId, onCommentAdded }: CommentFormProps) => 
         setError('');
 
         try {
-            // ✅ Utilise le service au lieu de fetch
+            //service instead of fetch
             await commentService.create({
                 content: content.trim(),
                 article: articleId
@@ -75,7 +75,7 @@ export const CommentForm = ({ articleId, onCommentAdded }: CommentFormProps) => 
                 <button
                     type="submit"
                     disabled={loading || !content.trim()}
-                    className="btn btn-primary"
+                    className="btn-sm"
                 >
                     {loading ? 'Posting...' : 'Post Comment'}
                 </button>

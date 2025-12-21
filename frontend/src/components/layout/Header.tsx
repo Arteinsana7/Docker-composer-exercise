@@ -59,7 +59,7 @@ const Header = () => {
                     {/* Conditional Nav to go to */}
                     <ul className="flex items-center gap-x-10">
                         {isAuthenticated ? (
-                            // ✅ User connecté
+                            // ✅ User connected !
                             <>
                                 <li className="text-sm opacity-70">
                                     Hello, <span className="text-lemon-green font-semibold">{user?.username}</span>
