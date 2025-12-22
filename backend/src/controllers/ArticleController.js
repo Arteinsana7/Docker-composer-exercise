@@ -9,15 +9,20 @@ import Article from "../models/Article.js";
 // === CREATE AN ARTICLE ===
 export async function createArticle(req, res) {
   try {
-    const { title, content, category } = req.body;
+    const { title, content, category, published } = req.body;
     const article = new Article({
       title,
       content,
+
       // the author is always a connected user
       author: req.user._id,
       category,
+      published : published !== undefined ? published : false,
     });
     const articleSauvegarde = await article.save();
+ await articleSauvegarde.populate('author', 'username email');
+  console.log('✅ Saved article:', articleSauvegarde);  // ← DEBUG
+
 
     res.status(201).json({
       success: true,
@@ -156,6 +161,27 @@ export async function getArticleById(req, res) {
     res.status(500).json({
       success: false,
       message: "Erreur lors de la récupération de l'article",
+      error: error.message,
+    });
+  }
+}
+
+//My own articles
+export async function getMyArticles(req, res) {
+  try {
+    const articles = await Article.find({ author: req.user._id })
+      .populate('author', 'username email')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: articles.length,
+      data: articles,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de vos articles',
       error: error.message,
     });
   }

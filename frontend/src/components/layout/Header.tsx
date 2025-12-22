@@ -2,17 +2,15 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import FuzzyText from "../comonds/FuzzyText";
 import toast from "react-hot-toast";
-import { useNavigate, } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const { user, logout, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
-
-
     const handleLogout = () => {
         toast((t) => (
-            <div className="flex flex-col gap-3  ">
+            <div className="flex flex-col gap-3">
                 <p>Are you sure you want to logout?</p>
                 <div className="flex gap-6">
                     <button
@@ -22,7 +20,7 @@ const Header = () => {
                             toast.dismiss(t.id);
                             toast.success('Logged out successfully!');
                         }}
-                        className="btn-sm text-sm py-1 px-3 "
+                        className="btn-sm text-sm py-1 px-3"
                     >
                         Yes, logout
                     </button>
@@ -35,7 +33,6 @@ const Header = () => {
                 </div>
             </div>
         ), {
-            // to toast will stay 5 secs
             duration: 5000,
         });
     };
@@ -56,13 +53,18 @@ const Header = () => {
                         </FuzzyText>
                     </Link>
 
-                    {/* Conditional Nav to go to */}
+                    {/* Conditional Nav */}
                     <ul className="flex items-center gap-x-10">
                         {isAuthenticated ? (
-                            // ✅ User connected !
+                            // ✅ User connected
                             <>
                                 <li className="text-sm opacity-70">
                                     Hello, <span className="text-lemon-green font-semibold">{user?.username}</span>
+                                </li>
+                                <li className="btn-sm">  {/* ← AJOUTE */}
+                                    <Link to="/create-article">
+                                        + New Article
+                                    </Link>
                                 </li>
                                 <li className="btn-sm">
                                     <Link to="/profile">
@@ -76,7 +78,7 @@ const Header = () => {
                                 </li>
                             </>
                         ) : (
-                            // ❌ not connected
+                            // ❌ Not connected
                             <>
                                 <li className="btn-sm">
                                     <Link to="/login">

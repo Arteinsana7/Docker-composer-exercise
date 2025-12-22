@@ -19,6 +19,11 @@ export const articleService = {
     const response = await api.get(`/articles/category/${category}`);
     return response.data.data;
   },
+  // get My Articles pubished and draft
+  getMyArticles: async (): Promise<Article[]> => {
+    const response = await api.get("/articles/my-articles");
+    return response.data.data;
+  },
 
   // Create an article (admin)
   create: async (articleData: Partial<Article>): Promise<Article> => {

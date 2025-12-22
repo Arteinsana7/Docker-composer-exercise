@@ -23,6 +23,7 @@ export interface Article {
   content: string;
   category: Category;
   author: User;
+  published: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,8 +1,10 @@
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { userService } from '@/services/userService';
 import { commentService } from '@/services/commentService';
-import type { Comment } from '@/types';
+import { articleService } from '@/services/articleService';
+import type { Comment, Article, Category } from '@/types';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import toast from 'react-hot-toast';
@@ -11,6 +13,7 @@ export function Profile() {
     const { user, updateUser, logout } = useAuth();
     const navigate = useNavigate();
     const [comments, setComments] = useState<Comment[]>([]);
+    const [Myarticles, setMyArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingComment, setEditingComment] = useState<string | null>(null);
     const [editContent, setEditContent] = useState('');
@@ -20,9 +23,17 @@ export function Profile() {
     const [formData, setFormData] = useState({
         username: user?.username || '',
         email: user?.email || '',
-
-
     });
+
+    // STATES FOR MODIFY AND ERASE ARTICLES
+    const [editingArticle, setEditingArticle] = useState<string | null>(null);
+    const [editArticleData, setEditArticleData] = useState({
+        title: '',
+        content: '',
+        category: 'oscilator' as Category,
+        published: false,
+
+    })
 
     useEffect(() => {
         const fetchUserComments = async () => {
@@ -43,6 +54,76 @@ export function Profile() {
 
         fetchUserComments();
     }, [user]);
+
+
+
+    // fetch My Articles = only the ones from the user
+    useEffect(() => {
+        const fetchMyArticles = async () => {
+            try {
+                const articles = await articleService.getMyArticles();
+                setMyArticles(articles);
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+            }
+        };
+        fetchMyArticles();
+    }, []);
+
+    // Refresh Articles
+    const refreshArticles = async () => {
+        try {
+            const articles = await articleService.getMyArticles();
+            setMyArticles(articles);
+        } catch (error) {
+            console.error('Error refreshing articles:', error);
+        }
+    };
+
+    // Delete article
+    const handleDeleteArticle = async (articleId: string) => {
+        if (!confirm('Delete this article?')) return;
+
+        try {
+            await articleService.delete(articleId);
+            await refreshArticles();
+            toast.success('Article deleted!');
+        } catch (error) {
+            console.error('Error deleting article:', error);
+            toast.error('Failed to delete article');
+        }
+    };
+
+    // Save the edited Article
+    // Edit article
+    const handleEditArticle = (article: Article) => {
+        setEditingArticle(article._id);
+        setEditArticleData({
+            title: article.title,
+            content: article.content,
+            category: article.category,
+            published: article.published,
+        });
+    };
+
+    // Save article edit
+    const handleSaveArticle = async (articleId: string) => {
+        if (!editArticleData.title.trim() || !editArticleData.content.trim()) {
+            toast.error('Title and content are required');
+            return;
+        }
+
+        try {
+            await articleService.update(articleId, editArticleData);
+            setEditingArticle(null);
+            await refreshArticles();
+            toast.success('Article updated!');
+        } catch (error) {
+            console.error('Error updating article:', error);
+            toast.error('Failed to update article');
+        }
+    };
+
 
     const refreshComments = async () => {
         if (!user) return;
@@ -94,8 +175,8 @@ export function Profile() {
 
     const handleSaveUserInfo = async () => {
         try {
-            // TODO: Appeler l'API backend
-            // await userService.updateProfile(formData);
+
+            await userService.updateProfile(formData);
 
             // Update le contexte avec les nouvelles infos
             if (user) {
@@ -133,9 +214,7 @@ export function Profile() {
                         onClick={async () => {
                             toast.dismiss(t.id);
                             try {
-                                // TODO: Appeler l'API backend
-                                // await userService.deleteAccount();
-
+                                await userService.deleteAccount();
                                 logout();
                                 navigate('/');
                                 toast.success('Account deleted');
@@ -305,13 +384,13 @@ export function Profile() {
                                 <h2 className="text-2xl font-bold mb-6 text-lemon-green">
                                     Activity
                                 </h2>
-
+                                {/* ARTICLES */}
                                 <div className="grid grid-cols-2 gap-10 pb-20">
                                     <div className="card bg-synth-purple/10">
                                         <p className="text-sm opacity-70 mb-2">Articles</p>
-                                        <p className="text-3xl font-bold">0</p>
+                                        <p className="text-3xl font-bold">{Myarticles.length}</p>
                                     </div>
-
+                                    {/* COMMENTS */}
                                     <div className="card bg-synth-purple/10">
                                         <p className="text-sm opacity-70 mb-2">Comments</p>
                                         <p className="text-3xl font-bold">{comments.length}</p>
@@ -319,6 +398,97 @@ export function Profile() {
                                 </div>
                             </div>
 
+                            {/* My Articles articles published and draft */}
+                            <div>
+                                <h2 className="text-2xl font-bold mb-6 text-lemon-green">
+                                    My Articles
+                                </h2>
+
+                                {Myarticles.length === 0 ? (
+                                    <p className="opacity-70">No articles yet</p>
+                                ) : (
+                                    <div className="space-y-10 pb-20">
+                                        {Myarticles.map((article) => (
+                                            <div key={article._id} className="card bg-violette">
+                                                {editingArticle === article._id ? (
+                                                    // Mode édition
+                                                    <div className="space-y-4">
+                                                        <input
+                                                            type="text"
+                                                            value={editArticleData.title}
+                                                            onChange={(e) => setEditArticleData({ ...editArticleData, title: e.target.value })}
+                                                            className="input w-full"
+                                                            placeholder="Title"
+                                                        />
+                                                        <select
+                                                            value={editArticleData.category}
+                                                            onChange={(e) => setEditArticleData({ ...editArticleData, category: e.target.value as Category })}
+                                                            className="input w-full"
+                                                        >
+                                                            <option value="oscillator">Oscillator</option>
+                                                            <option value="envelope">Envelope</option>
+                                                            <option value="lfo">LFO</option>
+                                                            <option value="filter">Filter</option>
+                                                            <option value="vca">VCA</option>
+                                                            <option value="sequencer">Sequencer</option>
+                                                        </select>
+                                                        <textarea
+                                                            value={editArticleData.content}
+                                                            onChange={(e) => setEditArticleData({ ...editArticleData, content: e.target.value })}
+                                                            className="input w-full min-h-[150px]"
+                                                            placeholder="Content"
+                                                        />
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => handleSaveArticle(article._id)}
+                                                                className="btn-sm btn-primary"
+                                                            >
+                                                                Save
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setEditingArticle(null)}
+                                                                className="btn-sm btn-secondary"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    // Mode affichage
+                                                    <>
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <h3 className="text-lg font-bold">{article.title}</h3>
+                                                            <span className={`badge ${article.published ? 'badge-lfo' : 'badge-vca'}`}>
+                                                                {article.published ? 'Published' : 'Draft'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-sm opacity-70 mb-2">
+                                                            Category: <span className="text-lemon-green">{article.category}</span>
+                                                        </p>
+                                                        <p className="text-sm opacity-50 mb-4">
+                                                            {new Date(article.createdAt).toLocaleDateString('fr-FR')}
+                                                        </p>
+                                                        <div className="flex justify-end gap-4">
+                                                            <button
+                                                                onClick={() => handleEditArticle(article)}
+                                                                className="pr-10 text-lemon-green hover:underline text-sm font-semibold"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteArticle(article._id)}
+                                                                className="text-red-500 hover:underline text-sm font-semibold"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                             {/* Recent Comments */}
                             <div>
                                 <h2 className="text-2xl font-bold mb-6 text-lemon-green">
@@ -379,6 +549,7 @@ export function Profile() {
                                                                 </button>
                                                             </div>
                                                         </div>
+
                                                     </>
                                                 )}
                                             </div>

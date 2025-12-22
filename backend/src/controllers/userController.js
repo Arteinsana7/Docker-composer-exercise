@@ -1,5 +1,7 @@
 // backend/src/controllers/UserController.js
 import UserModel from "../models/UserModel.js";
+import Article from "../models/Article.js";
+import Comment from "../models/Comment.js"
 import { catchAsync } from "../utils/middlewares/errorHandler.js";
 import AppError from "../utils/AppError.js";
 
@@ -31,7 +33,34 @@ export const updateProfile = catchAsync(async (req, res, next) => {
       role: updatedUser.role,
     },
   });
-});
+}
+);
+
+/*
+* @desc Delete account
+* @route Delete/api/users/me
+* @access private access
+*/
+
+export async function deleteAccount(req, res) {
+  try {
+    // Delete user's data
+    await Comment.deleteMany({ author: req.user._id });
+    await Article.deleteMany({ author: req.user._id });
+    await UserModel.findByIdAndDelete(req.user._id);
+
+    res.json({
+      success: true,
+      message: "Account deleted successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting account",
+      error: error.message
+    });
+  }
+}
 
 export const changePassword = catchAsync(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
