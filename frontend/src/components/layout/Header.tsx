@@ -12,7 +12,7 @@ const Header = () => {
         toast((t) => (
             <div className="flex flex-col gap-3">
                 <p>Are you sure you want to logout?</p>
-                <div className="flex gap-6">
+                <div className="flex gap-10 mt-10 ">
                     <button
                         onClick={() => {
                             logout();
@@ -20,20 +20,20 @@ const Header = () => {
                             toast.dismiss(t.id);
                             toast.success('Logged out successfully!');
                         }}
-                        className="btn-sm text-sm py-1 px-3"
+                        className="btn-sm text-sm py-2 "
                     >
                         Yes, logout
                     </button>
                     <button
                         onClick={() => toast.dismiss(t.id)}
-                        className="btn-sm btn-secondary text-sm py-1 px-3"
+                        className="btn-sm btn-secondary text-sm py-1 "
                     >
                         Cancel
                     </button>
                 </div>
             </div>
         ), {
-            duration: 5000,
+            duration: 3000,
         });
     };
 

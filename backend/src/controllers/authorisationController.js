@@ -28,6 +28,8 @@ export const register = catchAsync(async (req, res, next) => {
       username: user.username,
       email: user.email,
       role: user.role,
+        createdAt: user.createdAt
+
     },
   });
 });
@@ -42,6 +44,7 @@ export const login = catchAsync(async (req, res, next) => {
   }
 
   const user = await UserModel.findOne({ email }).select("+password");
+
 
   if (!user || !(await user.comparePassword(password))) {
     return next(new AppError("Email ou mot de passe incorrect", 401));
@@ -58,6 +61,7 @@ export const login = catchAsync(async (req, res, next) => {
       username: user.username,
       email: user.email,
       role: user.role,
+       createdAt: user.createdAt
     },
   });
 });

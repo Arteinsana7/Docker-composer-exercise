@@ -143,8 +143,12 @@ export const deleteComment = catchAsync(async (req, res, next) => {
     return next(new AppError("Commentaire non trouvé", 404));
   }
 
-  // Vérifier que l'utilisateur connecté est l'auteur
-  if (comment.author.toString() !== req.user._id.toString()) {
+
+    // Admin can delete everything, user can only delete comments.
+  const isAuthor = comment.author.toString() === req.user._id.toString();
+  const isAdmin = req.user.role === 'admin';
+
+  if (!isAuthor && !isAdmin) {
     return next(
       new AppError(
         "Non autorisé : vous n'êtes pas l'auteur de ce commentaire",
@@ -152,6 +156,16 @@ export const deleteComment = catchAsync(async (req, res, next) => {
       )
     );
   }
+
+  // // Vérifier que l'utilisateur connecté est l'auteur
+  // if (comment.author.toString() !== req.user._id.toString()) {
+  //   return next(
+  //     new AppError(
+  //       "Non autorisé : vous n'êtes pas l'auteur de ce commentaire",
+  //       403
+  //     )
+  //   );
+  // }
 
   await comment.deleteOne();
 

@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 
 export function Profile() {
     const { user, updateUser, logout } = useAuth();
+
     const navigate = useNavigate();
     const [comments, setComments] = useState<Comment[]>([]);
     const [Myarticles, setMyArticles] = useState<Article[]>([]);
@@ -370,6 +371,22 @@ export function Profile() {
                                             <label className="text-sm opacity-70">Email</label>
                                             <p className="text-lg">{user.email}</p>
                                         </div>
+
+                                        <div>
+                                            <label className="text-sm opacity-70">Member since</label>
+                                            <p className="text-lg">
+                                                {user.createdAt ? (
+                                                    new Date(user.createdAt).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    })
+                                                ) : (
+                                                    'N/A'
+                                                )}
+                                            </p>
+                                        </div>
+
 
 
                                     </div>
