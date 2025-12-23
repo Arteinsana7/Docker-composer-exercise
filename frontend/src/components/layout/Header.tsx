@@ -61,11 +61,13 @@ const Header = () => {
                                 <li className="text-sm opacity-70">
                                     Hello, <span className="text-lemon-green font-semibold">{user?.username}</span>
                                 </li>
-                                <li className="btn-sm">  {/* ← AJOUTE */}
-                                    <Link to="/create-article">
-                                        + New Article
-                                    </Link>
-                                </li>
+                                {user?.role === 'admin' && (
+                                    <li className="btn-sm">
+                                        <Link to="/create-article">
+                                            + New Article
+                                        </Link>
+                                    </li>
+                                )}
                                 <li className="btn-sm">
                                     <Link to="/profile">
                                         Profile

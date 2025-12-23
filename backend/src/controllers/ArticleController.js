@@ -133,7 +133,8 @@ export async function getAllArticles(req, res) {
 //Public routes
 export async function getArticleById(req, res) {
   try {
-    const article = await Article.findById(req.params.id).populate(
+    const article = await Article.findById(req.params.id)
+    .populate(
       "author",
       "username email"
     );

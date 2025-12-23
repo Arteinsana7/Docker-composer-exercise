@@ -1,4 +1,4 @@
-// backend/src/controllers/UserController.js
+
 import UserModel from "../models/UserModel.js";
 import Article from "../models/Article.js";
 import Comment from "../models/Comment.js"
