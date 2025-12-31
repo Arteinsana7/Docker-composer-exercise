@@ -56,7 +56,7 @@ const Header = () => {
                     {/* Conditional Nav */}
                     <ul className="flex items-center gap-x-10">
                         {isAuthenticated ? (
-                            // ✅ User connected
+                            // is the User connected then :
                             <>
                                 <li className="text-sm opacity-70">
                                     Hello, <span className="text-lemon-green font-semibold">{user?.username}</span>
@@ -80,7 +80,7 @@ const Header = () => {
                                 </li>
                             </>
                         ) : (
-                            // ❌ Not connected
+                            // if Not then :
                             <>
                                 <li className="btn-sm">
                                     <Link to="/login">

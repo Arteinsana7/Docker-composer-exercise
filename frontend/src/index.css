@@ -159,6 +159,8 @@ a {
 }
 
 .btn-primary {
+  font-size: 14px;
+  font-weight: 500;
   background-color: var(--color-lemon-green);
   color: var(--color-deep-blue);
 }
@@ -169,6 +171,8 @@ a {
 } */
 
 .btn-secondary {
+  font-size: 14px;
+  font-weight: 400;
   background-color: var(--color-violette);
   color: var(--color-break-white);
 }
@@ -265,11 +269,3 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-/* .glow-lime {
-  text-shadow: 0 0 10px rgba(190, 255, 5, 0.8);
-}
-
-.glow-purple {
-  text-shadow: 0 0 10px rgba(106, 54, 152, 0.8);
-} */

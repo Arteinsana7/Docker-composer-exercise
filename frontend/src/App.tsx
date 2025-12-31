@@ -6,6 +6,7 @@ import ArticlePage from './pages/Article';
 import CategoryPage from './pages/CategoryPage';
 import { Profile } from './pages/Profile';
 import { CreateArticle } from './pages/CreateArticle';
+import { VerifyEmail } from './pages/VerifyEmail';
 
 
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/articles/:id" element={<ArticlePage />} />
         <Route path="/profile" element={< Profile />} />
