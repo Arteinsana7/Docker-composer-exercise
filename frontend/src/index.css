@@ -161,25 +161,32 @@ a {
 .btn-primary {
   font-size: 14px;
   font-weight: 500;
+  border-radius: 1.5rem;
   background-color: var(--color-lemon-green);
   color: var(--color-deep-blue);
 }
 
-/* .btn-primary:hover {
+.btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(190, 255, 5, 0.5);
-} */
+  background: var(--color-pink);
+  color: var(--color-bordeaux);
+  /* box-shadow: 0 0 20px rgba(190, 255, 5, 0.5); */
+}
 
 .btn-secondary {
   font-size: 14px;
   font-weight: 400;
+  border-radius: 1.5rem;
   background-color: var(--color-violette);
   color: var(--color-break-white);
 }
 
 .btn-secondary:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(106, 54, 152, 0.5);
+  background: var(--color-break-white);
+  color: var(--color-deep-blue);
+
+  /* box-shadow: 0 0 20px rgba(106, 54, 152, 0.5); */
 }
 
 .card {

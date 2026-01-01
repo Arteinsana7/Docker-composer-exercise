@@ -28,6 +28,19 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    // New fields. email to confirm : Verification by email :
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      select: false,
+    },
+    verificationTokenExpires: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,

@@ -17,12 +17,11 @@ export async function createArticle(req, res) {
       // the author is always a connected user
       author: req.user._id,
       category,
-      published : published !== undefined ? published : false,
+      published: published !== undefined ? published : false,
     });
     const articleSauvegarde = await article.save();
- await articleSauvegarde.populate('author', 'username email');
-  console.log('✅ Saved article:', articleSauvegarde);  // ← DEBUG
-
+    await articleSauvegarde.populate("author", "username email");
+    console.log("✅ Saved article:", articleSauvegarde); // ← DEBUG
 
     res.status(201).json({
       success: true,
@@ -133,8 +132,7 @@ export async function getAllArticles(req, res) {
 //Public routes
 export async function getArticleById(req, res) {
   try {
-    const article = await Article.findById(req.params.id)
-    .populate(
+    const article = await Article.findById(req.params.id).populate(
       "author",
       "username email"
     );
@@ -171,7 +169,7 @@ export async function getArticleById(req, res) {
 export async function getMyArticles(req, res) {
   try {
     const articles = await Article.find({ author: req.user._id })
-      .populate('author', 'username email')
+      .populate("author", "username email")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -182,7 +180,7 @@ export async function getMyArticles(req, res) {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération de vos articles',
+      message: "Erreur lors de la récupération de vos articles",
       error: error.message,
     });
   }
@@ -199,11 +197,11 @@ export async function getMyArticles(req, res) {
 export async function getArticleWithComments(req, res) {
   try {
     const article = await Article.findById(req.params.id)
-    .populate('author', 'username email')
-    .populate({
-      path: "comments",
-      options: { sort: { createdAt: -1 } },
-    });
+      .populate("author", "username email")
+      .populate({
+        path: "comments",
+        options: { sort: { createdAt: -1 } },
+      });
 
     if (!article) {
       return res.status(404).json({
@@ -260,10 +258,14 @@ export async function updateArticle(req, res) {
     }
 
     // Now we can modify
-    const { title, content, category } = req.body;
+    const { title, content, category, published } = req.body;
+
     if (title) article.title = title;
     if (content) article.content = content;
     if (category) article.category = category;
+    if (published !== undefined) {
+      article.published = published;
+    }
 
     const articleModifie = await article.save();
 
@@ -339,15 +341,14 @@ export async function getArticlesByCategory(req, res) {
       data: articles,
     });
   } catch (error) {
-    console.error('Error getting articles by category:', error);
+    console.error("Error getting articles by category:", error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération des articles par catégorie',
+      message: "Erreur lors de la récupération des articles par catégorie",
       error: error.message,
     });
   }
 }
-
 
 /**
  * @desc    Toggle publish/unpublish article

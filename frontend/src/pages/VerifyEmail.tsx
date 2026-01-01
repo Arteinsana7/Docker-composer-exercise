@@ -76,8 +76,8 @@ export function VerifyEmail() {
                                 <div className="text-6xl mb-6">❌</div>
                                 <h1 className="text-3xl font-bold text-red-500">Verification Failed</h1>
                                 <p className="text-xl opacity-90">{message}</p>
-                                <div className="flex gap-4 justify-center mt-6">
-                                    <Link to="/register" className="btn btn-primary">
+                                <div className="flex gap-10 justify-center  mt-10">
+                                    <Link to="/register" className="btn btn-primary ">
                                         Register Again
                                     </Link>
                                     <Link to="/login" className="btn btn-secondary">

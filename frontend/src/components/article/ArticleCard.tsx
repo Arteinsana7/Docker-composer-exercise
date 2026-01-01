@@ -33,32 +33,32 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
     return (
         <div className="col-span-6 md:col-span-4">
             <div className="main-container">
-                <div className="card h-full flex flex-col">
+                <div className="card h-full flex flex-col ">
 
                     {/* Category badge */}
-                    <div className="mb-4">
+                    <div className="mb-10  ">
                         <span className={`badge ${getBadgeClass(category)}`}>
                             {category}
                         </span>
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-2xl font-bold mb-3">
+                    <h2 className="md:font-large font-medium font-bold mb-3">
                         {title}
                     </h2>
 
                     {/* Excerpt */}
-                    <p className="text-beige opacity-80 mb-4 ">
+                    <p className="color-break-white opacity-80 mb-4 ">
                         {content.substring(0, 150)}...
                     </p>
 
                     {/* Footer */}
-                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-synth-purple/30">
+                    <div className="flex justify-between items-center mt-10 pt-10 border-t border-synth-purple/30">
                         <div className="flex flex-col gap-1">
-                            <span className="text-sm opacity-70">
+                            <span className="font-small opacity-70">
                                 By {author.username}
                             </span>
-                            <span className="text-xs opacity-50">
+                            <span className="font-small opacity-50">
                                 {formatDate(createdAt)}
                             </span>
                         </div>

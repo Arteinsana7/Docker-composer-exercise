@@ -5,11 +5,11 @@ const Footer = () => {
 
             {/* Image SVG */}
             <img
-                src="/images/Shape2.svg"
+                src="/images/stairs.svg"
                 alt="Footer Background"
                 className="w-full h-auto"
             />
-            {/* <div className=" z-20 py-0 bg-green-minth flex justify-center items-left">
+            <div className=" z-20 py-0 bg-green-minth flex justify-center items-left">
                 <div className="flex flex-row gap-2 md:gap-20 md:p-20 text-deep-blue">
                     <p className="text-center font-semibold">
                         reseau
@@ -19,7 +19,7 @@ const Footer = () => {
                     </p>
 
                 </div>
-            </div> */}
+            </div>
 
 
             {/* Texte en dessous */}

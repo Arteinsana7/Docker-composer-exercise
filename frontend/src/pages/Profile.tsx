@@ -8,6 +8,8 @@ import type { Comment, Article, Category } from '@/types';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import toast from 'react-hot-toast';
+import { showDeleteConfirm } from '@/components/ui/DeleteConfirmToast';
+
 
 export function Profile() {
     const { user, updateUser, logout } = useAuth();
@@ -76,6 +78,7 @@ export function Profile() {
         try {
             const articles = await articleService.getMyArticles();
             setMyArticles(articles);
+            // console.log('📥Refreshed articles:', articles);
         } catch (error) {
             console.error('Error refreshing articles:', error);
         }
@@ -83,16 +86,15 @@ export function Profile() {
 
     // Delete article
     const handleDeleteArticle = async (articleId: string) => {
-        if (!confirm('Delete this article?')) return;
-
-        try {
-            await articleService.delete(articleId);
-            await refreshArticles();
-            toast.success('Article deleted!');
-        } catch (error) {
-            console.error('Error deleting article:', error);
-            toast.error('Failed to delete article');
-        }
+        showDeleteConfirm({
+            title: 'Delete Article?',
+            message: 'Are you sure you want to delete this article?',
+            onConfirm: async () => {
+                await articleService.delete(articleId);
+                await refreshArticles();
+                toast.success('Article deleted!');
+            }
+        });
     };
 
     // Save the edited Article
@@ -113,6 +115,8 @@ export function Profile() {
             toast.error('Title and content are required');
             return;
         }
+        console.log('📤 Sending to backend:', editArticleData);  // ← AJOUTE
+
 
         try {
             await articleService.update(articleId, editArticleData);
@@ -140,16 +144,15 @@ export function Profile() {
     };
 
     const handleDeleteComment = async (commentId: string) => {
-        if (!confirm('Delete this comment?')) return;
-
-        try {
-            await commentService.delete(commentId);
-            await refreshComments();
-            toast.success('Comment deleted!');
-        } catch (error) {
-            console.error('Error deleting comment:', error);
-            toast.error('Failed to delete comment');
-        }
+        showDeleteConfirm({
+            title: 'Delete Comment?',
+            message: 'Are you sure you want to delete this comment?',
+            onConfirm: async () => {
+                await commentService.delete(commentId);
+                await refreshComments();
+                toast.success('Comment deleted!');
+            }
+        });
     };
 
     const handleEditComment = (commentId: string, currentContent: string) => {
@@ -179,7 +182,7 @@ export function Profile() {
 
             await userService.updateProfile(formData);
 
-            // Update le contexte avec les nouvelles infos
+            // Update context with new infos
             if (user) {
                 updateUser({
                     ...user,
@@ -205,42 +208,18 @@ export function Profile() {
     };
 
     const handleDeleteAccount = () => {
-        toast((t) => (
-            <div className="flex flex-col gap-3 px-10">
-                <p className="font-bold text-red-500"> ⚠️ Warning! </p>
-                <p>This will permanently delete your account and all your data.</p>
-                <p className="text-sm opacity-70">This action cannot be undone.</p>
-                <div className="flex gap-6">
-                    <button
-                        onClick={async () => {
-                            toast.dismiss(t.id);
-                            try {
-                                await userService.deleteAccount();
-                                logout();
-                                navigate('/');
-                                toast.success('Account deleted');
-                            } catch (error) {
-                                console.error('Error deleting account:', error);
-                                toast.error('Failed to delete account');
-                            }
-                        }}
-                        className="btn-sm bg-red-500 hover:bg-red-600 text-white"
-                    >
-                        Yes, delete forever
-                    </button>
-                    <button
-                        onClick={() => toast.dismiss(t.id)}
-                        className="btn-sm btn-secondary"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        ), {
-            duration: Infinity,
+        showDeleteConfirm({
+            title: 'Delete Account?',
+            message: 'This will permanently delete your account and all your data.',
+            onConfirm: async () => {
+                await userService.deleteAccount();
+                logout();
+                navigate('/');
+                toast.success('Account deleted');
+            }
         });
     };
-
+    // conditionals to render with the login aacount or not.
     if (!user) {
         return null;
     }
@@ -285,7 +264,7 @@ export function Profile() {
                                         Account Information
                                     </h2>
                                     {!editingUser && (
-                                        <div className="flex gap-4 ">
+                                        <div className="flex gap-6 ">
                                             <button
                                                 onClick={() => setEditingUser(true)}
                                                 className="text-lemon-green hover:underline text-sm font-semibold pr-10"
@@ -429,7 +408,7 @@ export function Profile() {
                                             <div key={article._id} className="card bg-violette">
                                                 {editingArticle === article._id ? (
                                                     // Mode édition
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-10">
                                                         <input
                                                             type="text"
                                                             value={editArticleData.title}
@@ -455,7 +434,23 @@ export function Profile() {
                                                             className="input w-full min-h-[150px]"
                                                             placeholder="Content"
                                                         />
-                                                        <div className="flex gap-2">
+
+                                                        {/* ← AJOUTE CE BLOC ICI */}
+                                                        <div className="flex items-center gap-4">
+                                                            <label className="text-sm font-semibold opacity-70">Status:</label>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setEditArticleData({ ...editArticleData, published: !editArticleData.published })}
+                                                                className={`badge ${editArticleData.published ? 'badge-lfo' : 'badge-vca'} cursor-pointer`}
+                                                            >
+                                                                {editArticleData.published ? 'Published' : 'Draft'}
+                                                            </button>
+                                                            <span className="text-sm opacity-50">
+                                                                {editArticleData.published ? 'Visible to everyone' : 'Only visible to you'}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="flex gap-10">
                                                             <button
                                                                 onClick={() => handleSaveArticle(article._id)}
                                                                 className="btn-sm btn-primary"
