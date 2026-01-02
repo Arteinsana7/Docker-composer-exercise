@@ -5,12 +5,16 @@ interface DeleteConfirmProps {
     title: string;
     message: string;
     onConfirm: () => Promise<void>; // function to execute when we click yes
+    confirmText?: string;
+    cancelText?: string;
 }
 
 export const showDeleteConfirm = ({
     title,
     message,
     onConfirm,
+    confirmText = 'Yes, delete',  //
+    cancelText = 'Cancel'
 
 }: DeleteConfirmProps) => {
     toast((t) => (
@@ -36,13 +40,13 @@ export const showDeleteConfirm = ({
                     }}
                     className="btn-sm bg-red-500 hover:bg-red-600 text-white pt-10"
                 >
-                    Yes, delete
+                    {confirmText}
                 </button>
                 <button
                     onClick={() => toast.dismiss(t.id)}
                     className="btn-sm pr-10 btn-secondary"
                 >
-                    Cancel
+                    {cancelText}
                 </button>
             </div>
         </div>

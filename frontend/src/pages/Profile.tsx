@@ -78,7 +78,6 @@ export function Profile() {
         try {
             const articles = await articleService.getMyArticles();
             setMyArticles(articles);
-            // console.log('📥Refreshed articles:', articles);
         } catch (error) {
             console.error('Error refreshing articles:', error);
         }
@@ -115,7 +114,7 @@ export function Profile() {
             toast.error('Title and content are required');
             return;
         }
-        console.log('📤 Sending to backend:', editArticleData);  // ← AJOUTE
+
 
 
         try {
@@ -314,7 +313,6 @@ export function Profile() {
                                         </div>
 
 
-
                                         <div className="flex gap-10  ">
                                             <button
                                                 onClick={handleSaveUserInfo}
@@ -331,6 +329,7 @@ export function Profile() {
                                         </div>
                                     </div>
                                 ) : (
+
                                     // View Mode
                                     <div className="space-y-5 pb-20">
                                         <div className='flex pb-20  '>
@@ -435,7 +434,7 @@ export function Profile() {
                                                             placeholder="Content"
                                                         />
 
-                                                        {/* ← AJOUTE CE BLOC ICI */}
+                                                        {/* Draft publish toogle*/}
                                                         <div className="flex items-center gap-4">
                                                             <label className="text-sm font-semibold opacity-70">Status:</label>
                                                             <button
