@@ -5,10 +5,15 @@ import toast from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
 import { HamburgerMenu } from "./HamburgerMenu";
 import { showDeleteConfirm } from "../ui/DeleteConfirmToast";
+import { SearchModal } from "../search/SearchModal";
+import { useState } from "react";
+import { FiSearch, FiPlus, } from "react-icons/fi";
+
 
 const Header = () => {
     const { user, logout, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const handleLogout = () => {
         showDeleteConfirm({
@@ -27,23 +32,38 @@ const Header = () => {
     return (
         <header>
             <nav className="main-container py-30">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between">
+
 
                     {/* Logo */}
-                    <Link to="/" className="font-medium uppercase">
-                        <FuzzyText
-                            baseIntensity={0.2}
-                            color="#beff05"
-                            fontSize="2.2rem"
+                    <div className="flex items-center gap-x-20 font-medium uppercase">
+                        <Link to="/">
+                            <FuzzyText
+                                baseIntensity={0.2}
+                                color="#beff05"
+                                fontSize="2.2rem"
+                            >
+                                La Synthèse ∿
+                            </FuzzyText>
+
+                        </Link>
+
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="search-button"
+                            aria-label="Search"
                         >
-                            La Synthèse ∿
-                        </FuzzyText>
-                    </Link>
+                            <FiSearch className="search-button-icon" />
+                            <span className="search-button-text">Search</span>
+                        </button>
+
+                    </div>
 
                     {/* Conditional Nav */}
                     <ul className="flex items-center gap-x-10">
+                        {/* Search Button (toujours visible) */}
+
                         {isAuthenticated ? (
-                            // is the User connected then :
                             <>
                                 {/* Desktop Menu */}
                                 <div className="hidden lg:flex items-center gap-x-10">
@@ -52,8 +72,8 @@ const Header = () => {
                                     </li>
                                     {user?.role === 'admin' && (
                                         <li className="btn-sm">
-                                            <Link to="/create-article">
-                                                + New Article
+                                            <Link to="/create-article" className="flex items-center gap-10">
+                                                <FiPlus />New Article
                                             </Link>
                                         </li>
                                     )}
@@ -90,6 +110,11 @@ const Header = () => {
                     </ul>
                 </div>
             </nav>
+            {/* Search Modal */}
+            <SearchModal
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+            />
         </header>
     );
 };

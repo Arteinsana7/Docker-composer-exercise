@@ -146,6 +146,7 @@ export function Profile() {
         showDeleteConfirm({
             title: 'Delete Comment?',
             message: 'Are you sure you want to delete this comment?',
+            confirmText: 'Yes, delete',  // ← AJOUTE si manquant
             onConfirm: async () => {
                 await commentService.delete(commentId);
                 await refreshComments();

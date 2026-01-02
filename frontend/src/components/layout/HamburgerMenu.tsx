@@ -4,9 +4,12 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { showDeleteConfirm } from '@/components/ui/DeleteConfirmToast';
 import { useNavigate } from 'react-router-dom';
+import { SearchModal } from '../search/SearchModal';
+import { FiSearch } from "react-icons/fi";
 
 export const HamburgerMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false); // state for modal on mobile
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -65,6 +68,7 @@ export const HamburgerMenu = () => {
 
                     {/* Menu Items */}
                     <nav className="hamburger-nav">
+
                         {user?.role === 'admin' && (
                             <Link
                                 to="/create-article"
@@ -73,7 +77,18 @@ export const HamburgerMenu = () => {
                             >
                                 + New Article
                             </Link>
+
                         )}
+                        <button
+                            onClick={() => {
+                                setIsSearchOpen(true);
+                                setIsOpen(false);
+                            }}
+                            className="hamburger-link flex justify-evently items-center gap-10"
+                        >
+                            <FiSearch />
+                            Search
+                        </button>
                         <Link
                             to="/profile"
                             onClick={() => setIsOpen(false)}
@@ -81,6 +96,7 @@ export const HamburgerMenu = () => {
                         >
                             Profile
                         </Link>
+
                         <button
                             onClick={handleLogout}
                             className="hamburger-link hamburger-logout"
@@ -90,6 +106,10 @@ export const HamburgerMenu = () => {
                     </nav>
                 </div>
             </div>
+            <SearchModal
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+            />
         </div>
     );
 };

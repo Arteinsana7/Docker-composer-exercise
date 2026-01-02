@@ -51,6 +51,6 @@ export const showDeleteConfirm = ({
             </div>
         </div>
     ), {
-        duration: Infinity,
+        duration: 3000,
     });
 };
