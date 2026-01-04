@@ -91,7 +91,7 @@ export async function getAllArticles(req, res) {
 
     // === 4. REQ WITH ALL FILTERS ===
     const articles = await Article.find(filter)
-      .populate("author", "nom email")
+      .populate("author", "username email") ///
       .sort(sort) // Dynamic sorting
       .skip(skip) // jump from previous pages
       .limit(limitNumber); // limit

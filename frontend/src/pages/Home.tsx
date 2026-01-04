@@ -2,6 +2,7 @@ import Header from '@/components/layout/Header';
 import { CategoryGrid } from '@/components/category/CategoryGrid';
 import { HeroSearch } from '@/components/search/HeroSearch';  // ← AJOUTE
 import Footer from '@/components/layout/Footer';
+import { LatestArticles } from '@/components/article/LatestArticles';
 
 const Home = () => {
     return (
@@ -25,10 +26,11 @@ const Home = () => {
                     {/*  Hero Search */}
                     <HeroSearch />
                 </div>
+                <LatestArticles />
 
                 {/* Titre - full width*/}
                 <div className="col-span-6 md:col-span-12 mb-8">
-                    <h2 className="font-large font-bold text-center mb-20">
+                    <h2 className="font-large font-bold text-center mt-40">
                         All Categories
                     </h2>
                 </div>
