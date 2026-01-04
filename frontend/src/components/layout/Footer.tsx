@@ -1,3 +1,5 @@
+import { FiInstagram } from "react-icons/fi";
+
 const Footer = () => {
     return (
 
@@ -11,12 +13,12 @@ const Footer = () => {
             />
             <div className=" z-20 py-0 bg-green-minth flex justify-center items-left">
                 <div className="flex flex-row gap-2 md:gap-20 md:p-20 text-deep-blue">
-                    <p className="text-center font-semibold">
-                        reseau
-                    </p>
-                    <p className="font-medium">
-                        more reserau
-                    </p>
+
+                    <a href="https://instagram.com/ton-compte">
+                        <FiInstagram />
+                    </a>
+                    <link />
+
 
                 </div>
             </div>

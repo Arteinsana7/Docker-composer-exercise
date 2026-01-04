@@ -6,42 +6,42 @@ export const CategoryGrid = () => {
     {
       category: 'oscillator' as const,
       icon: '∿',
-      image: '/images/1.png',
+      image: '/images/oscilator.jpg',
       title: 'Oscillators',
       description: 'Generate waveforms: sine, square, triangle, sawtooth'
     },
     {
       category: 'envelope' as const,
       icon: '⟋',
-      image: 'images/2.png',
+      image: 'images/Env.jpg',
       title: 'Envelopes',
       description: 'Control sound evolution over time with ADSR'
     },
     {
       category: 'lfo' as const,
       icon: '〰',
-      image: '/images/3.png',
+      image: '/images/lfo.jpg',
       title: 'LFOs',
       description: 'Low frequency oscillators for modulation effects'
     },
     {
       category: 'filter' as const,
       icon: '⊲',
-      image: '/images/4.png',
+      image: '/images/filter.jpg',
       title: 'Filters',
       description: 'Shape timbre by removing or emphasizing frequencies'
     },
     {
       category: 'vca' as const,
       icon: '⊳',
-      image: '/images/5.png',
+      image: '/images/vca.jpg',
       title: 'VCA',
       description: 'Voltage controlled amplifier for volume control'
     },
     {
       category: 'sequencer' as const,
       icon: '▤',
-      image: '/images/6.png',
+      image: '/images/sequencer.jpg',
       title: 'Sequencers',
       description: 'Create patterns and sequences of notes'
     },

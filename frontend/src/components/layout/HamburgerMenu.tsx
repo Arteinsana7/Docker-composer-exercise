@@ -1,3 +1,4 @@
+// frontend/src/components/layout/HamburgerMenu.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -9,8 +10,8 @@ import { FiSearch } from "react-icons/fi";
 
 export const HamburgerMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false); // state for modal on mobile
-    const { user, logout } = useAuth();
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const { user, logout, isAuthenticated } = useAuth();  // ← AJOUTE isAuthenticated
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -60,56 +61,82 @@ export const HamburgerMenu = () => {
                         ×
                     </button>
 
-                    {/* User Info */}
-                    <div className="hamburger-user">
-                        <p className="hamburger-user-label">Hello,</p>
-                        <p className="hamburger-user-name">{user?.username}</p>
-                    </div>
+                    {/* User Info (only if authenticated) */}
+                    {isAuthenticated && user && (
+                        <div className="hamburger-user">
+                            <p className="hamburger-user-label">Hello,</p>
+                            <p className="hamburger-user-name">{user.username}</p>
+                        </div>
+                    )}
 
                     {/* Menu Items */}
                     <nav className="hamburger-nav">
-
-                        {user?.role === 'admin' && (
-                            <Link
-                                to="/create-article"
-                                onClick={() => setIsOpen(false)}
-                                className="hamburger-link hamburger-link-primary"
-                            >
-                                + New Article
-                            </Link>
-
-                        )}
+                        {/* Search (always visible) */}
                         <button
                             onClick={() => {
                                 setIsSearchOpen(true);
                                 setIsOpen(false);
                             }}
-                            className="hamburger-link flex justify-evently items-center gap-10"
-                        >
-                            <FiSearch />
-                            Search
-                        </button>
-                        <Link
-                            to="/profile"
-                            onClick={() => setIsOpen(false)}
                             className="hamburger-link"
                         >
-                            Profile
-                        </Link>
-
-                        <button
-                            onClick={handleLogout}
-                            className="hamburger-link hamburger-logout"
-                        >
-                            Logout
+                            <FiSearch className="inline-block mr-2" />
+                            Search
                         </button>
+
+                        {/* Authenticated Menu */}
+                        {isAuthenticated ? (
+                            <>
+                                {user?.role === 'admin' && (
+                                    <Link
+                                        to="/create-article"
+                                        onClick={() => setIsOpen(false)}
+                                        className="hamburger-link hamburger-link-primary"
+                                    >
+                                        + New Article
+                                    </Link>
+                                )}
+                                <Link
+                                    to="/profile"
+                                    onClick={() => setIsOpen(false)}
+                                    className="hamburger-link"
+                                >
+                                    Profile
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="hamburger-link hamburger-logout"
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            /* Not Authenticated Menu */
+                            <>
+                                <Link
+                                    to="/login"
+                                    onClick={() => setIsOpen(false)}
+                                    className="hamburger-link"
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    to="/register"
+                                    onClick={() => setIsOpen(false)}
+                                    className="hamburger-link"
+                                >
+                                    Register
+                                </Link>
+                            </>
+                        )}
                     </nav>
                 </div>
             </div>
+
+            {/* Search Modal */}
             <SearchModal
                 isOpen={isSearchOpen}
                 onClose={() => setIsSearchOpen(false)}
             />
         </div>
     );
-};
+}

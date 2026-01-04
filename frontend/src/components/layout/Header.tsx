@@ -88,26 +88,24 @@ const Header = () => {
                                         </button>
                                     </li>
                                 </div>
-                                {console.log('Rendering HamburgerMenu for user:', user?.username)}
                                 {/* Mobile Menu (Hamburger) */}
-                                <HamburgerMenu />
+
                             </>
                         ) : (
                             // if Not then :
-                            <>
+                            // if Not then : Desktop only (hidden on mobile)
+                            <div className="hidden lg:flex items-center gap-x-10">
                                 <li className="btn-sm">
-                                    <Link to="/login">
-                                        Login
-                                    </Link>
+                                    <Link to="/login">Login</Link>
                                 </li>
                                 <li className="btn-sm">
-                                    <Link to="/register">
-                                        Register
-                                    </Link>
+                                    <Link to="/register">Register</Link>
                                 </li>
-                            </>
+                            </div>
+
                         )}
                     </ul>
+                    <HamburgerMenu />
                 </div>
             </nav>
             {/* Search Modal */}
