@@ -2,7 +2,6 @@ import api from "./api";
 import type { User } from "@/types";
 
 export const userService = {
-  // Update user profile
   updateProfile: async (data: {
     username?: string;
     email?: string;
@@ -19,8 +18,25 @@ export const userService = {
     await api.put("/users/me/password", data);
   },
 
-  //Delete account
+  // Delete account
   deleteAccount: async (): Promise<void> => {
-    await api.delete("user/me");
+    await api.delete("/users/me");
+  },
+
+  // Forgot password (public)
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+
+  // Reset password (public)
+  resetPassword: async (
+    token: string,
+    password: string
+  ): Promise<{ message: string }> => {
+    const response = await api.post(`/auth/reset-password/${token}`, {
+      password,
+    });
+    return response.data;
   },
 };

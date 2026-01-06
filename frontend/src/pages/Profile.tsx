@@ -9,6 +9,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import toast from 'react-hot-toast';
 import { showDeleteConfirm } from '@/components/ui/DeleteConfirmToast';
+import { Link } from 'react-router-dom';
 
 
 export function Profile() {
@@ -373,11 +374,26 @@ export function Profile() {
                             </div>
 
                             {/* Divider */}
-                            <div className="border-t border-synth-purple/30 pb-20 mt-20"></div>
-
+                            <div className="border-t border-b-violette pb-20 mt-20"></div>
+                            <div>
+                                <h2 className="text-2xl font-bold mb-6 text-lemon-green mb-10">
+                                    Security
+                                </h2>
+                                <div className="card bg-synth-purple/10">
+                                    <p className="text-sm opacity-70 mb-10">
+                                        Modify your password
+                                    </p>
+                                    <Link
+                                        to="/profile/change-password"
+                                        className="btn-sm inline-block"
+                                    >
+                                        Change Password
+                                    </Link>
+                                </div>
+                            </div>
                             {/* Stats numbers */}
                             <div>
-                                <h2 className="text-2xl font-bold mb-6 text-lemon-green">
+                                <h2 className="text-2xl font-bold mb-6 text-lemon-green py-10">
                                     Activity
                                 </h2>
                                 {/* ARTICLES */}

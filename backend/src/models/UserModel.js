@@ -41,10 +41,21 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+    resetPasswordToken: {
+  type: String,
+  default: null,
+  select: false,
+},
+resetPasswordExpires: {
+  type: Date,
+  default: null,
+  select: false,
+},
   },
   {
     timestamps: true,
   }
+
 );
 // middleware for hasing the passwords BEFORE saving
 userSchema.pre("save", async function (next) {

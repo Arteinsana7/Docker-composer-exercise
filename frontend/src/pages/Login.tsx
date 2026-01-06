@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -96,13 +97,18 @@ export function Login() {
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
+              <p className="text-center text-sm opacity-70">
+                <Link to="/forgot-password" className="text-lemon-green hover:underline font-semibold">
+                  Forgot password?
+                </Link>
+              </p>
             </form>
 
             <div className="flex justify-center">
               <p className="text-center mt-6 text-sm opacity-80">
-                Vous n'avez pas de compte?{' '}
+                You dont have an account?{' '}
                 <a href="/register" className="font-semibold hover:text-lemon-green">
-                  S'enregistrer
+                  Register
                 </a>
               </p>
             </div>

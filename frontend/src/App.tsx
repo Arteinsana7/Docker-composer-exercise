@@ -7,6 +7,10 @@ import CategoryPage from './pages/CategoryPage';
 import { Profile } from './pages/Profile';
 import { CreateArticle } from './pages/CreateArticle';
 import { VerifyEmail } from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import ChangePassword from './pages/ChangePassword';
+
 
 
 
@@ -18,9 +22,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/articles/:id" element={<ArticlePage />} />
         <Route path="/profile" element={< Profile />} />
+        <Route path="/profile/change-password" element={<ChangePassword />} />
         <Route path="/create-article" element={<CreateArticle />} />
       </Routes>
     </BrowserRouter>
